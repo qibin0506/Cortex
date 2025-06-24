@@ -11,6 +11,8 @@
 
 *在线体验服务不稳定，如果不能访问，可自己本地部署体验*
 
+**模型尺寸：0.6B，MoE推理激活参数0.2B**
+
 本项目提供训练各个阶段checkpoint，可按需下载。下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex](https://www.modelscope.cn/models/qibin0506/Cortex/files)
 
 ---
