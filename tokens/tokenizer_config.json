@@ -1,0 +1,144 @@
+{
+  "add_bos_token": false,
+  "add_eos_token": false,
+  "add_prefix_space": false,
+  "added_tokens_decoder": {
+    "1": {
+      "content": "<s>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "2": {
+      "content": "</s>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46943": {
+      "content": "<pad>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46944": {
+      "content": "<unk>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46945": {
+      "content": "<user>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46946": {
+      "content": "<assistant>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46947": {
+      "content": "<reasoning>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46948": {
+      "content": "</reasoning>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46949": {
+      "content": "<system>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46950": {
+      "content": "<answer>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46951": {
+      "content": "</answer>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46952": {
+      "content": "<image>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46953": {
+      "content": "<unuse_token_1>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46954": {
+      "content": "<unuse_token_2>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    }
+  },
+  "additional_special_tokens": [
+    "<pad>",
+    "<unk>",
+    "<user>",
+    "<assistant>",
+    "<reasoning>",
+    "</reasoning>",
+    "<system>",
+    "<answer>",
+    "</answer>",
+    "<image>",
+    "<unuse_token_1>",
+    "<unuse_token_2>"
+  ],
+  "clean_up_tokenization_spaces": false,
+  "eos_token": "</s>",
+  "legacy": true,
+  "model_max_length": 131072,
+  "pad_token": "<pad>",
+  "padding_side": "left",
+  "sp_model_kwargs": {},
+  "spaces_between_special_tokens": false,
+  "tokenizer_class": "LlamaTokenizer",
+  "unk_token": "<unk>",
+  "use_default_system_prompt": false
+}

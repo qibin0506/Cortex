@@ -1,0 +1,12 @@
+# Base ----------------------------------------
+torch
+transformers
+deepspeed
+sentencepiece
+protobuf
+modelscope
+pyarrow
+pandas
+scikit-learn
+bottle
+paste

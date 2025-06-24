@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortex - AI 聊天</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts (使用国内镜像并引入 Noto Sans SC) -->
+    <link rel="preconnect" href="https://fonts.googlefonts.cn">
+    <link href="https://fonts.googlefonts.cn/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdn.staticfile.org/KaTeX/0.16.9/katex.min.js"></script>
+    <script src="https://cdn.staticfile.org/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.staticfile.org/marked/12.0.1/marked.min.js"></script>
+
+    <!-- highlight.js for Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdn.staticfile.org/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <style>
+        /* --- 字体和排版优化 --- */
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+        }
+        .prose {
+            line-height: 1.75;
+        }
+        .prose > :first-child { margin-top: 0; }
+        .prose > :last-child { margin-bottom: 0; }
+
+        /* --- 其他自定义样式 --- */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e1f20; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #5a5a5a; }
+        .autoresize-textarea { resize: none; overflow-y: hidden; }
+
+        summary::-webkit-details-marker { display: none; }
+        summary { list-style: none; }
+
+        .typing-indicator span {
+            display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+            background-color: #9ca3af; animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); }
+        }
+        .katex-error { color: #ef4444; }
+        .prose :where(pre) {
+            background-color: #1e1f20 !important; border: 1px solid #374151;
+            border-radius: 0.5rem; padding: 1em;
+        }
+        .prose :where(code):not(:where([class~="not-prose"] *))::before,
+        .prose :where(code):not(:where([class~="not-prose"] *))::after { content: ""; }
+        .hljs { color: #abb2bf; }
+
+        /* --- 参数面板过渡效果 --- */
+        #settings-panel.hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+        }
+        #settings-panel {
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+        }
+        /* --- 移除数字输入框的箭头 --- */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-[#131314] text-gray-200">
+    <div id="user_uuid" style="display:none">{{__USER_UUID_PLACEHOLDER__}}</div>
+    <div class="flex h-screen w-full">
+        <!-- 主聊天界面 -->
+        <main class="flex flex-col flex-1 h-screen">
+            <!-- 顶部标题栏 -->
+            <header class="p-4 md:px-6 md:py-4 border-b border-gray-700/50">
+                <div class="max-w-4xl mx-auto flex justify-between items-center">
+                    <div>
+                        <h1 class="text-xl font-bold text-white">Cortex</h1>
+                        <p class="text-xs text-gray-400 mt-1">Model: Cotex-0.6B-A0.2B</p>
+                    </div>
+                    <a href="https://github.com/qibin0506" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200" title="View on GitHub">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    </a>
+                </div>
+            </header>
+
+            <!-- 聊天记录区域 -->
+            <div id="chat-container" class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
+                <div class="max-w-4xl mx-auto w-full">
+                    <!-- 欢迎消息 -->
+                    <div class="flex items-start gap-4 my-8" data-role="assistant">
+                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                        </div>
+                        <div data-content="你好！我是AI助手。你今天想聊些什么？" class="bg-[#1e1f20] p-4 rounded-xl rounded-tl-none prose prose-invert max-w-none">
+                            <p>你好！我是AI助手。你今天想聊些什么？</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="p-4 md:p-6 bg-[#131314] border-t border-gray-700/50">
+                <div class="max-w-4xl mx-auto relative">
+                    <!-- MODIFIED: 参数设置面板 (垂直布局) -->
+                    <div id="settings-panel" class="hidden absolute bottom-full left-0 mb-3 bg-[#1e1f20] border border-gray-600 rounded-lg p-4 shadow-lg w-full max-w-sm">
+                        <div class="flex flex-col">
+                            <!-- Temperature Slider -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-1.5">
+                                        <label for="temperature-slider" class="text-sm font-medium text-gray-300">Temperature</label>
+                                        <div class="group relative flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 cursor-help"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 rounded-lg bg-gray-800 border border-gray-600 p-3 text-xs text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
+                                                <p class="font-bold mb-1">温度</p>
+                                                较高的值（如 1.2）会使输出更随机、更有创意，而较低的值（如 0.1）会使其更具确定性和专注性。
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="number" id="temperature-input" min="0" max="2" step="0.05" class="w-20 text-center text-sm font-mono bg-[#131314] border border-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-1">
+                                </div>
+                                <input id="temperature-slider" type="range" min="0" max="2" value="0.95" step="0.05" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <!-- Top_p Slider -->
+                            <div class="space-y-2 pt-4 mt-4 border-t border-gray-700/50">
+                                <div class="flex justify-between items-center">
+                                     <div class="flex items-center gap-1.5">
+                                        <label for="top-p-slider" class="text-sm font-medium text-gray-300">Top P</label>
+                                        <div class="group relative flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 cursor-help"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 rounded-lg bg-gray-800 border border-gray-600 p-3 text-xs text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
+                                                <p class="font-bold mb-1">核采样</p>
+                                                较高的值（如 0.9）会考虑更多词汇选择，使输出更多样、更丰富；而较低的值（如 0.2）会筛选掉大部分选项，使输出更保守、更可预测。
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="number" id="top-p-input" min="0" max="1" step="0.05" class="w-20 text-center text-sm font-mono bg-[#131314] border border-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-1">
+                                </div>
+                                <input id="top-p-slider" type="range" min="0" max="1" value="0.75" step="0.05" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <!-- Thinking Budget -->
+                            <div class="space-y-3 pt-4 mt-4 border-t border-gray-700/50">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-1.5">
+                                        <label for="thinking-budget-toggle" class="text-sm font-medium text-gray-300">思考预算</label>
+                                        <div class="group relative flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 cursor-help"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 rounded-lg bg-gray-800 border border-gray-600 p-3 text-xs text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
+                                                <p class="font-bold mb-1">思考预算</p>
+                                                开启后，可以为模型的思考过程设定一个计算量上限（单位：token），有助于控制响应时间和成本。
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <label for="thinking-budget-toggle" class="relative inline-flex items-center cursor-pointer">
+                                      <input type="checkbox" id="thinking-budget-toggle" class="sr-only peer">
+                                      <div class="w-11 h-6 bg-gray-600 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-500/50 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                                <div id="thinking-budget-slider-container" class="hidden space-y-2">
+                                    <div class="flex justify-between items-center">
+                                         <label for="thinking-budget-slider" class="text-xs text-gray-400">设置预算值</label>
+                                         <input type="number" id="thinking-budget-input" min="128" max="512" step="1" class="w-20 text-center text-sm font-mono bg-[#131314] border border-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-1">
+                                    </div>
+                                    <input id="thinking-budget-slider" type="range" min="128" max="512" value="256" step="1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="chat-form" class="relative">
+                        <div class="bg-[#1e1f20] rounded-2xl border border-gray-600 focus-within:border-blue-500 transition-colors duration-200 flex flex-col">
+                            <div class="flex items-end p-2 pb-1">
+                                <textarea id="message-input" class="autoresize-textarea flex-1 bg-transparent text-gray-200 placeholder-gray-500 focus:outline-none px-1" placeholder="在这里输入消息..." rows="1"></textarea>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 pb-1 px-3 border-t border-gray-700/50">
+                                <div class="flex items-center space-x-2">
+                                    <button type="button" id="thinking-mode-btn" title="思考模式 (已开启)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-gray-300 hover:bg-gray-700 transition-colors duration-200">
+                                        <svg id="think-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><path d="M15.06 9.38a6 6 0 0 1 8.09 5.12c0 3.31-2.69 6-6 6h-1.17a2 2 0 0 0-1.79 1.11L12 22a2 2 0 0 1-1.79-1.11h0a2 2 0 0 0-1.79-1.11H6c-3.31 0-6-2.69-6-6a6 6 0 0 1 5.4-5.92 6 6 0 0 1 8.49-3.7Z"></path><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path></svg>
+                                        <span class="text-xs">思考模式</span>
+                                    </button>
+                                    <button type="button" id="settings-btn" title="参数设置" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-gray-300 hover:bg-gray-700 transition-colors duration-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+                                        <span class="text-xs">参数</span>
+                                    </button>
+                                </div>
+                                <button id="send-btn" type="submit" class="p-2 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200 disabled:bg-gray-600 disabled:cursor-not-allowed flex-shrink-0" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <p class="text-xs text-gray-500 text-center mt-3 px-4">AI可能会犯错。请核查重要信息。</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 元素引用 ---
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            const chatContainer = document.getElementById('chat-container').querySelector('.max-w-4xl');
+            const thinkingModeBtn = document.getElementById('thinking-mode-btn');
+            const thinkIcon = document.getElementById('think-icon');
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsPanel = document.getElementById('settings-panel');
+
+            const temperatureSlider = document.getElementById('temperature-slider');
+            const temperatureInput = document.getElementById('temperature-input');
+            const topPSlider = document.getElementById('top-p-slider');
+            const topPInput = document.getElementById('top-p-input');
+
+            // NEW: Thinking Budget elements
+            const thinkingBudgetToggle = document.getElementById('thinking-budget-toggle');
+            const thinkingBudgetContainer = document.getElementById('thinking-budget-slider-container');
+            const thinkingBudgetSlider = document.getElementById('thinking-budget-slider');
+            const thinkingBudgetInput = document.getElementById('thinking-budget-input');
+
+            // --- 状态变量 ---
+            let isThinkingEnabled = true;
+            let temperature = parseFloat(temperatureSlider.value);
+            let topP = parseFloat(topPSlider.value);
+            let isThinkingBudgetEnabled = false; // Default off
+            let thinkingBudgetValue = parseInt(thinkingBudgetSlider.value, 10); // Default value
+
+            // --- 函数: 初始化参数控制器 ---
+            const initializeParameters = () => {
+                // Set initial values for Temperature & Top P
+                temperatureInput.value = parseFloat(temperatureSlider.value).toFixed(2);
+                topPInput.value = parseFloat(topPSlider.value).toFixed(2);
+                // Set initial values for Thinking Budget
+                thinkingBudgetInput.value = parseInt(thinkingBudgetSlider.value, 10);
+                thinkingBudgetToggle.checked = isThinkingBudgetEnabled;
+                thinkingBudgetContainer.classList.toggle('hidden', !isThinkingBudgetEnabled);
+
+
+                // --- 参数事件监听 ---
+
+                // Temperature sync
+                temperatureSlider.addEventListener('input', (e) => {
+                    const value = parseFloat(e.target.value);
+                    temperature = value;
+                    temperatureInput.value = value.toFixed(2);
+                });
+                temperatureInput.addEventListener('change', (e) => {
+                    let value = parseFloat(e.target.value);
+                    if (isNaN(value)) { value = 0.95; }
+                    const clampedValue = Math.max(0, Math.min(2, value));
+                    temperature = clampedValue;
+                    temperatureInput.value = clampedValue.toFixed(2);
+                    temperatureSlider.value = clampedValue;
+                });
+
+                // Top P sync
+                topPSlider.addEventListener('input', (e) => {
+                    const value = parseFloat(e.target.value);
+                    topP = value;
+                    topPInput.value = value.toFixed(2);
+                });
+                topPInput.addEventListener('change', (e) => {
+                    let value = parseFloat(e.target.value);
+                    if (isNaN(value)) { value = 0.75; }
+                    const clampedValue = Math.max(0, Math.min(1, value));
+                    topP = clampedValue;
+                    topPInput.value = clampedValue.toFixed(2);
+                    topPSlider.value = clampedValue;
+                });
+
+                // NEW: Thinking Budget sync
+                thinkingBudgetToggle.addEventListener('change', (e) => {
+                    isThinkingBudgetEnabled = e.target.checked;
+                    thinkingBudgetContainer.classList.toggle('hidden', !isThinkingBudgetEnabled);
+                });
+                thinkingBudgetSlider.addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value, 10);
+                    thinkingBudgetValue = value;
+                    thinkingBudgetInput.value = value;
+                });
+                thinkingBudgetInput.addEventListener('change', (e) => {
+                    let value = parseInt(e.target.value, 10);
+                    if (isNaN(value)) { value = 256; }
+                    const clampedValue = Math.max(128, Math.min(512, value));
+                    thinkingBudgetValue = clampedValue;
+                    thinkingBudgetInput.value = clampedValue;
+                    thinkingBudgetSlider.value = clampedValue;
+                });
+            };
+
+            // --- 其他事件监听 ---
+            messageInput.addEventListener('input', () => {
+                updateSendButtonState();
+                adjustTextareaHeight();
+            });
+
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const messageText = messageInput.value.trim();
+                if (messageText) {
+                    await sendMessage(messageText);
+                }
+            });
+
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
+                }
+            });
+
+            thinkingModeBtn.addEventListener('click', () => {
+                isThinkingEnabled = !isThinkingEnabled;
+                thinkIcon.classList.toggle('text-blue-400');
+                thinkIcon.classList.toggle('text-gray-400');
+                thinkingModeBtn.title = isThinkingEnabled ? '思考模式 (已开启)' : '思考模式 (已关闭)';
+            });
+
+            settingsBtn.addEventListener('click', () => {
+                settingsPanel.classList.toggle('hidden');
+            });
+
+
+            // --- 核心函数 ---
+            function updateSendButtonState() {
+                 sendBtn.disabled = messageInput.value.trim() === '';
+            }
+
+            function adjustTextareaHeight() {
+                messageInput.style.height = 'auto';
+                const maxHeight = 200;
+                messageInput.style.height = `${Math.min(messageInput.scrollHeight, maxHeight)}px`;
+                messageInput.style.overflowY = messageInput.scrollHeight > maxHeight ? 'auto' : 'hidden';
+            }
+
+            async function sendMessage(text) {
+                const userHtml = `
+                    <div class="flex items-start gap-4 my-6 justify-end" data-role="user" data-content="${text.replace(/"/g, '&quot;')}">
+                        <div class="bg-blue-600 p-4 rounded-xl rounded-br-none prose prose-invert max-w-none">
+                            ${marked.parse(text)}
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center font-bold flex-shrink-0">你</div>
+                    </div>`;
+                chatContainer.insertAdjacentHTML('beforeend', userHtml);
+                scrollToBottom();
+
+                messageInput.value = '';
+                messageInput.dispatchEvent(new Event('input'));
+
+                settingsPanel.classList.add('hidden');
+
+                const chatHistory = constructChatHistoryPayload();
+                await fetchAIResponseWithPost(chatHistory);
+            }
+
+            function constructChatHistoryPayload() {
+                const history = [];
+                const messages = chatContainer.querySelectorAll('[data-role]');
+                messages.forEach(msg => {
+                    const role = msg.dataset.role;
+                    const content = msg.dataset.content;
+                    if (role && content) {
+                         history.push({ role: role, content: content });
+                    }
+                });
+                return history;
+            }
+
+            function renderContent(element, text) {
+                if (!element || typeof marked === 'undefined' || typeof hljs === 'undefined') {
+                    if (element) element.textContent = text;
+                    return;
+                }
+                if (text.includes("{{assistant_name}}")) {
+                    text = text.replace("{{assistant_name}}", "Cortex")
+                }
+                element.innerHTML = marked.parse(text);
+                element.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+                if (typeof renderMathInElement !== 'undefined') {
+                    renderMathInElement(element, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true}
+                        ],
+                        throwOnError: false
+                    });
+                }
+            }
+
+            async function fetchAIResponseWithPost(chatHistory) {
+                const messageId = `ai-message-${Date.now()}`;
+                const initialAIHtml = `
+                    <div class="flex items-start gap-4 my-6" data-role="assistant" id="${messageId}">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                        </div>
+                        <div class="w-full flex flex-col items-start">
+                            <div id="typing-indicator-${messageId}" class="bg-[#1e1f20] p-4 rounded-xl rounded-tl-none">
+                                <div class="typing-indicator"><span></span><span></span><span></span></div>
+                            </div>
+                            <details id="thinking-container-${messageId}" class="w-full mb-2 group" style="display: none;">
+                                <summary class="inline-flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-gray-200 hover:bg-white/5 px-2.5 py-1 rounded-full transition-all cursor-pointer outline-none">
+                                    <span>思考过程</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300 group-open:rotate-180"><path d="m6 9 6 6 6-6"/></svg>
+                                </summary>
+                                <div class="mt-2 p-3 bg-black/20 rounded-lg">
+                                    <div id="thinking-process-text-${messageId}" class="text-sm text-gray-500 prose prose-invert max-w-none"></div>
+                                </div>
+                            </details>
+                             <div id="final-answer-container-${messageId}" class="w-full bg-[#1e1f20] p-4 rounded-xl rounded-tl-none prose prose-invert max-w-none" style="display: none;">
+                                <div id="final-answer-text-${messageId}"></div>
+                            </div>
+                        </div>
+                    </div>`;
+                chatContainer.insertAdjacentHTML('beforeend', initialAIHtml);
+                scrollToBottom();
+
+                const aiMessageContainer = document.getElementById(messageId);
+                const typingIndicator = document.getElementById(`typing-indicator-${messageId}`);
+                const thinkingContainer = document.getElementById(`thinking-container-${messageId}`);
+                const thinkingTextEl = document.getElementById(`thinking-process-text-${messageId}`);
+                const answerContainer = document.getElementById(`final-answer-container-${messageId}`);
+                const answerTextEl = document.getElementById(`final-answer-text-${messageId}`);
+
+                let firstChunkReceived = false;
+                let thinkingAccumulator = '';
+                let contentAccumulator = '';
+                let user_uuid = document.getElementById('user_uuid').textContent;
+
+                try {
+                    const requestBody = {
+                        history: chatHistory,
+                        thinking: isThinkingEnabled,
+                        uuid: user_uuid,
+                        temperature: temperature,
+                        top_p: topP,
+                        think_budget_enable: isThinkingBudgetEnabled,
+                        think_budget: thinkingBudgetValue
+                    };
+
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody),
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let buffer = '';
+
+                    const processStream = async () => {
+                        while (true) {
+                            const { value, done } = await reader.read();
+                            if (done) {
+                                aiMessageContainer.dataset.content = contentAccumulator;
+                                if (thinkingAccumulator.trim().length > 0 && isThinkingEnabled) {
+                                    thinkingContainer.open = true;
+                                }
+                                break;
+                            }
+                            buffer += decoder.decode(value, { stream: true });
+
+                            let eomIndex;
+                            while ((eomIndex = buffer.indexOf('\n\n')) >= 0) {
+                                const message = buffer.slice(0, eomIndex);
+                                buffer = buffer.slice(eomIndex + 2);
+                                processSSEMessage(message);
+                            }
+                        }
+                    };
+
+                    await processStream();
+
+                } catch (error) {
+                    console.error("Fetch failed:", error);
+                    typingIndicator?.remove();
+                    answerTextEl.innerHTML = `<span class="text-red-500">抱歉，连接到AI服务器时出错。请检查后端服务是否正在运行以及网络连接。</span>`;
+                    answerContainer.style.display = 'block';
+                }
+
+                function processSSEMessage(message) {
+                    if (!message.startsWith('{')) return;
+                    try {
+                        const parsedMessage = JSON.parse(message);
+                        handleServerEvent(parsedMessage.event, parsedMessage.data);
+                    } catch(e) {
+                         console.error('Error parsing SSE message:', message, e);
+                    }
+                }
+
+                function handleServerEvent(event, data) {
+                    if (!firstChunkReceived) {
+                        firstChunkReceived = true;
+                        typingIndicator?.remove();
+                    }
+                    if (event === 'thinking_chunk') {
+                        if (thinkingContainer.style.display === 'none' && isThinkingEnabled) {
+                            thinkingContainer.style.display = 'block';
+                        }
+                        thinkingAccumulator += data;
+                        renderContent(thinkingTextEl, thinkingAccumulator);
+                    } else if (event === 'answer_chunk') {
+                        if (answerContainer.style.display === 'none') {
+                            answerContainer.style.display = 'block';
+                        }
+                        contentAccumulator += data;
+                        renderContent(answerTextEl, contentAccumulator);
+                    } else if (event === 'error') {
+                         console.error("Server error:", data);
+                         answerTextEl.innerHTML = `<span class="text-red-500">服务器返回错误: ${data}</span>`;
+                         answerContainer.style.display = 'block';
+                    }
+                     scrollToBottom();
+                }
+            }
+
+            function scrollToBottom() {
+                chatContainer.parentElement.scrollTop = chatContainer.parentElement.scrollHeight;
+            }
+
+            // --- 初始化 ---
+            initializeParameters();
+            updateSendButtonState();
+            adjustTextareaHeight();
+        });
+    </script>
+</body>
+</html>
