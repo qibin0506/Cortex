@@ -27,7 +27,7 @@
 ### 自己训练
 安装上面本机部署部分安装依赖，如果需要继续训练，可按需下载checkpoint，然后进行训练，训练方法如下：
 1. 预训练：`smart_train train_pretrain.py`
-2. SFT：`smart_train train_sft.py
+2. SFT：`smart_train train_sft.py`
 3. 推理能力：`smart_train train_reasoning.py`
 4. DPO：`smart_train train_dpo.py`
 5. GRPO：`smart_train train_grpo.py`
