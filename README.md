@@ -35,3 +35,7 @@
 注意：
 1. 参数可在utils.py文件中修改，内置参数均是4*4090设备上使用的参数
 2. 本项目会自动管理训练文件，无需提前下载、组织训练数据
+
+### 模型和训练代码
+1. 模型代码(project_llm_model)：[https://github.com/qibin0506/llm-model](https://github.com/qibin0506/llm-model)
+2. 训练代码(project_llm_trainer)：[https://github.com/qibin0506/llm_trainer](https://github.com/qibin0506/llm_trainer)
