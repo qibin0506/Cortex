@@ -10,3 +10,5 @@ pandas
 scikit-learn
 bottle
 paste
+project_llm_trainer=0.4.15
+project_llm_model=0.4.0
