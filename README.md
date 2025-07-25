@@ -21,10 +21,8 @@
 1. 确保本机已安装python3
 2. clone或下载本项目
 3. 安装依赖 `pip3 install -r requirements.txt`
-4. 安装模型库 [llm-model](https://github.com/qibin0506/llm-model-pytorch) `pip3 install project_llm_model`
-5. 安装训练、工具库 [llm_trainer](https://github.com/qibin0506/llm_trainer) `pip3 install project_llm_trainer`
-6. 下载checkpoint [last_checkpoint.bin](https://www.modelscope.cn/models/qibin0506/Cortex/resolve/master/last_checkpoint.bin)，并放置到项目根目录
-7. 执行 `python3 app.py`运行项目，访问链接[http://0.0.0.0:8080/](http://0.0.0.0:8080/) 即可体验
+4. 下载checkpoint [last_checkpoint.bin](https://www.modelscope.cn/models/qibin0506/Cortex/resolve/master/last_checkpoint.bin)，并放置到项目根目录
+5. 执行 `python3 app.py`运行项目，访问链接[http://0.0.0.0:8080/](http://0.0.0.0:8080/) 即可体验
 
 ### 自己训练
 安装上面本机部署部分安装依赖，如果需要继续训练，可按需下载checkpoint，然后进行训练，训练方法如下：
