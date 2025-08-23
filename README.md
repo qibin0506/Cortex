@@ -1,41 +1,57 @@
-# Cortex
-个人从零训练一个MoE LLM，训练过程包括Pretrain、SFT、Reasoning、DPO、GRPO
+# Cortex V2
+Cortex V2更新如下：
+1. 替换预训练数据集，使用[序列猴子通用文本数据集](https://github.com/mobvoi/seq-monkey-data/blob/main/docs/pretrain_open_corpus.md)进行预训练。
+2. 使用更先进的训练方法。
+3. 新增思考模式控制，可通过添加/think和/no think控制是否思考。
+4. 新增思考预算功能，可控制思考token长度。
 
 ---
 
-<div align="center">
-  <img src="./images/screenshot.png">
-</div>
-
-在线体验：[https://s.c1ns.cn/cortex](https://s.c1ns.cn/cortex)
-
-*在线体验服务不稳定，如果不能访问，可自己本地部署体验*
+| 思考模式 | 非思考模式 | 思考预算 |
+|----------|----------|----------|
+| <img src="./images/screenshot_1.png"> | <img src="./images/screenshot_2.png"> | <img src="./images/screenshot_3.png"> |
 
 **模型尺寸：0.6B，MoE推理激活参数0.2B**
 
-本项目提供训练各个阶段checkpoint，可按需下载。下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex](https://www.modelscope.cn/models/qibin0506/Cortex/files)
+本项目提供训练各个阶段checkpoint，可按需下载。下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)
 
 ---
 
-### 本机部署
+### 快速开始
 1. 确保本机已安装python3
 2. clone或下载本项目
 3. 安装依赖 `pip3 install -r requirements.txt`
-4. 下载checkpoint [last_checkpoint.bin](https://www.modelscope.cn/models/qibin0506/Cortex/resolve/master/last_checkpoint.bin)，并放置到项目根目录
+4. 下载checkpoint [https://www.modelscope.cn/models/qibin0506/Cortex-V2/resolve/master/dpo.bin](https://www.modelscope.cn/models/qibin0506/Cortex-V2/resolve/master/dpo.bin)，并放置到项目根目录
 5. 执行 `python3 app.py`运行项目，访问链接[http://0.0.0.0:8080/](http://0.0.0.0:8080/) 即可体验
 
-### 自己训练
-安装上面本机部署部分安装依赖，如果需要继续训练，可按需下载checkpoint，然后进行训练，训练方法如下：
-1. 预训练：`smart_train train_pretrain.py`
-2. SFT：`smart_train train_sft.py`
-3. 推理能力：`smart_train train_reasoning.py`
-4. DPO：`smart_train train_dpo.py`
-5. GRPO：`smart_train train_grpo.py`
+### 技术细节
+#### 模型和训练代码
+本项目模型和训练代码完全开源并解耦。
+1. 模型代码并作为通用LLM（支持VLM）项目开放在[https://github.com/qibin0506/llm-model](https://github.com/qibin0506/llm-model)
+2. 训练代码支持Pretrain、SFT、GRPO、GSPO、DPO等训练方式，代码完成度较高，上手简单，项目开放在[https://github.com/qibin0506/llm_trainer](https://github.com/qibin0506/llm_trainer)
 
-注意：
-1. 参数可在utils.py文件中修改，内置参数均是4*4090设备上使用的参数
-2. 本项目会自动管理训练文件，无需提前下载、组织训练数据
+#### 训练细节
+Cortex V2采用更加先进的训练方式进行训练，具体情况如下；
 
-### 模型和训练代码
-1. 模型代码(project_llm_model)：[https://github.com/qibin0506/llm-model](https://github.com/qibin0506/llm-model)
-2. 训练代码(project_llm_trainer)：[https://github.com/qibin0506/llm_trainer](https://github.com/qibin0506/llm_trainer)
+##### 预训练
+预训练过程采用两阶段训练模式
+| 阶段1 | 阶段2 |
+|----------|----------|
+| train_pretrain_stage0.py | train_pretrain_stage1.py |
+| 上下文长度为512，在较短训练文本上进行训练 | 采用YaRN技术将上下文扩展至2048，并在长文本序列上继续训练 |
+
+
+##### 后训练
+后训练过程采用四阶段训练模式
+| 阶段1 | 阶段2 | 阶段3 | 阶段4 |
+|----------|----------|----------|----------|
+| train_cot.py | train_grpo.py | train_mix.py | train_dpo.py |
+| 在纯COT数据集上进行SFT，让模型原生支持思考模式 | 采用GSPO技术，提升模式的逻辑思考能力 | 使用COT和非COT混合数据集上进行SFT，让模式支持思考控制和思考预算能力 | 使用DPO进行人类对齐训练 |
+
+#### 继续训练
+本项目提供各个阶段训练完成后的checkpoint, 可根据自己需求选择checkpoint继续训练。
+checkpoint下载：[https://www.modelscope.cn/models/qibin0506/Cortex-V2/files](https://www.modelscope.cn/models/qibin0506/Cortex-V2/files)
+训练方式：
+1. 确定继续训练的阶段，修改`file_dataset.py`中对应阶段的FileDataset中的文件，然后使用`smart_train`进行训练，例如重新进行dpo，则执行`smart_train train_dpo.py`
+2. 本项目GSPO阶段是在4x5090进行训练，其他阶段都是在4x4090进行训练，同时`utils.py`中的配置数据也是按照对应硬件配置确定，如有不同的训练设备可自行修改`utils.py`进行适配。
+3. `file_dataset.py`文件用来管理数据集文件，可按需修改，数据集文件会自动下载，使用完成后会自动删除，无需人工管理。
