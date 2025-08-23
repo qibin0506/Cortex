@@ -19,7 +19,7 @@
       "single_word": false,
       "special": true
     },
-    "46943": {
+    "46945": {
       "content": "<pad>",
       "lstrip": false,
       "normalized": false,
@@ -27,7 +27,7 @@
       "single_word": false,
       "special": true
     },
-    "46944": {
+    "46946": {
       "content": "<unk>",
       "lstrip": false,
       "normalized": false,
@@ -35,7 +35,7 @@
       "single_word": false,
       "special": true
     },
-    "46945": {
+    "46947": {
       "content": "<user>",
       "lstrip": false,
       "normalized": false,
@@ -43,7 +43,7 @@
       "single_word": false,
       "special": true
     },
-    "46946": {
+    "46948": {
       "content": "<assistant>",
       "lstrip": false,
       "normalized": false,
@@ -51,24 +51,8 @@
       "single_word": false,
       "special": true
     },
-    "46947": {
-      "content": "<reasoning>",
-      "lstrip": false,
-      "normalized": false,
-      "rstrip": false,
-      "single_word": false,
-      "special": true
-    },
-    "46948": {
-      "content": "</reasoning>",
-      "lstrip": false,
-      "normalized": false,
-      "rstrip": false,
-      "single_word": false,
-      "special": true
-    },
     "46949": {
-      "content": "<system>",
+      "content": "<think>",
       "lstrip": false,
       "normalized": false,
       "rstrip": false,
@@ -76,7 +60,7 @@
       "special": true
     },
     "46950": {
-      "content": "<answer>",
+      "content": "</think>",
       "lstrip": false,
       "normalized": false,
       "rstrip": false,
@@ -84,7 +68,7 @@
       "special": true
     },
     "46951": {
-      "content": "</answer>",
+      "content": "<system>",
       "lstrip": false,
       "normalized": false,
       "rstrip": false,
@@ -92,7 +76,7 @@
       "special": true
     },
     "46952": {
-      "content": "<image>",
+      "content": "<answer>",
       "lstrip": false,
       "normalized": false,
       "rstrip": false,
@@ -100,7 +84,7 @@
       "special": true
     },
     "46953": {
-      "content": "<unuse_token_1>",
+      "content": "</answer>",
       "lstrip": false,
       "normalized": false,
       "rstrip": false,
@@ -108,6 +92,22 @@
       "special": true
     },
     "46954": {
+      "content": "<image>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46955": {
+      "content": "<unuse_token_1>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    },
+    "46956": {
       "content": "<unuse_token_2>",
       "lstrip": false,
       "normalized": false,
@@ -121,8 +121,8 @@
     "<unk>",
     "<user>",
     "<assistant>",
-    "<reasoning>",
-    "</reasoning>",
+    "<think>",
+    "</think>",
     "<system>",
     "<answer>",
     "</answer>",

@@ -1,14 +1,14 @@
 {
-  "<pad>": 46943,
-  "<unk>": 46944,
-  "<user>": 46945,
-  "<assistant>": 46946,
-  "<reasoning>": 46947,
-  "</reasoning>": 46948,
-  "<system>": 46949,
-  "<answer>": 46950,
-  "</answer>": 46951,
-  "<image>": 46952,
-  "<unuse_token_1>": 46953,
-  "<unuse_token_2>": 46954
+  "<pad>": 46945,
+  "<unk>": 46946,
+  "<user>": 46947,
+  "<assistant>": 46948,
+  "<think>": 46949,
+  "</think>": 46950,
+  "<system>": 46951,
+  "<answer>": 46952,
+  "</answer>": 46953,
+  "<image>": 46954,
+  "<unuse_token_1>": 46955,
+  "<unuse_token_2>": 46956
 }

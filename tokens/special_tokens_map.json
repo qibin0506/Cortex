@@ -29,14 +29,14 @@
       "single_word": false
     },
     {
-      "content": "<reasoning>",
+      "content": "<think>",
       "lstrip": false,
       "normalized": false,
       "rstrip": false,
       "single_word": false
     },
     {
-      "content": "</reasoning>",
+      "content": "</think>",
       "lstrip": false,
       "normalized": false,
       "rstrip": false,

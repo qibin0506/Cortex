@@ -1,6 +1,4 @@
 import json
-import os.path
-import time
 import uuid
 
 from bottle import Bottle, request, response, run
@@ -9,7 +7,6 @@ import torch
 from utils import init_env, get_model_config
 from llm_model import LlmModel
 from llm_trainer import TrainerTools, streaming_generate
-from constant import system_prompt_content
 
 init_env()
 device = "cpu"
@@ -18,8 +15,10 @@ if torch.cuda.is_available():
 elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
     device = "mps"
 
-model = LlmModel(get_model_config()).to(device)
-model.load_state_dict(torch.load('./last_checkpoint.bin', weights_only=True))
+dtype = torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float16
+
+model = LlmModel(get_model_config(long_context=True)).to(device=device, dtype=dtype)
+model.load_state_dict(torch.load('./dpo.bin', weights_only=True))
 model.eval()
 
 app = Bottle()
@@ -35,6 +34,7 @@ def fmt_msg(event, data):
 def generate_user_uuid() -> str:
     unique_id = uuid.uuid4()
     return unique_id.hex
+
 
 @app.get('/')
 def index():
@@ -72,17 +72,18 @@ def sse_chat():
         user_uuid = payload.get('uuid')
         temperature = payload.get('temperature')
         top_p = payload.get('top_p')
-        think_budget_enable = payload.get('think_budget_enable')
+        think_budget_enable = thinking and payload.get('think_budget_enable')
+        think_budget = payload.get('think_budget')
+        if not think_budget:
+            think_budget_enable = False
 
-        if not think_budget_enable:
-            reasoning_budget = None
-        else:
-            reasoning_budget = payload.get('think_budget')
+        # 仅保留两轮对话
+        chat_history = chat_history[-3:]
 
-        if not thinking:
-            chat_history = chat_history[-5:]
-        else:
-            chat_history = chat_history[-1:]
+        # if not thinking:
+        #     chat_history = chat_history[-5:]
+        # else:
+        #     chat_history = chat_history[-1:]
 
         if not chat_history:
             yield fmt_msg('error', 'Chat history cannot be empty')
@@ -92,54 +93,71 @@ def sse_chat():
         return
 
     try:
-        chat_history = [{'role':'system', 'content':system_prompt_content}, *chat_history]
+        chat_history = [{'role':'system', 'content':'你是由QB开发的聊天助手Cortex'}, *chat_history]
         chat_template = TrainerTools().tokenizer.apply_chat_template(chat_history, tokenizer=False)
 
         if not thinking:
-            chat_template = f'{chat_template}<assistant><reasoning> </reasoning>'
+            chat_template = f'{chat_template}<assistant><think> </think>'
         else:
-            chat_template = f'{chat_template}<assistant><reasoning>'
+            chat_template = f'{chat_template}<assistant><think>'
+
+        prompt_token = TrainerTools().tokenizer.encode(chat_template, unsqueeze=True)
+        output_token_count = max(2048 - prompt_token.shape[-1], 0)
+
+        if think_budget_enable:
+            think_budget_content = '。考虑到用户的时间限制，我现在必须根据思考直接给出解决方案\n'
+            think_budget_encoded = TrainerTools().tokenizer.encode(f'{think_budget_content}</think>')
+            think_budget = think_budget - len(think_budget_encoded)
+            output_token_count = min(think_budget, output_token_count)
+
+            generator = streaming_generate(
+                model=model,
+                prompt=prompt_token,
+                max_position_embeddings=2048,
+                max_new_tokens=output_token_count,
+                temperature=temperature,
+                k=None,
+                p=top_p,
+                device=device
+            )
+
+            think_content = ''
+            for chunk in generator:
+                think_content += chunk
+                if chunk == '</think>': break
+                yield fmt_msg('thinking_chunk', chunk)
+
+            if '</think>' not in think_content:
+                think_content += f'{think_budget_content}</think>'
+                yield fmt_msg('thinking_chunk', think_budget_content)
+
+            prompt_token = torch.concat([prompt_token, TrainerTools().tokenizer.encode(think_content, unsqueeze=True)], dim=-1)
+            output_token_count = max(2048 - prompt_token.shape[-1], 0)
 
         generator = streaming_generate(
             model=model,
-            prompt=chat_template,
-            max_position_embeddings=1024,
-            max_new_tokens=1024,
+            prompt=prompt_token,
+            max_position_embeddings=2048,
+            max_new_tokens=output_token_count,
             temperature=temperature,
             k=None,
             p=top_p,
-            device=device,
-            reasoning_budget=reasoning_budget
+            device=device
         )
 
-        full_response = ''
         type = 'thinking_chunk' if thinking else 'answer_chunk'
-        think_token_count = 0
         for chunk in generator:
-            full_response = f'{full_response}{chunk}'
             if chunk == '</s>': break
             if chunk == '<assistant>' or chunk == '</assistant>': continue
-            if chunk == '</reasoning>' or chunk == '</answer>': continue
-            if chunk == '<reasoning>':
+            if chunk == '</think>' or chunk == '</answer>': continue
+            if chunk == '<think>':
                 type = 'thinking_chunk'
-                think_token_count = 0
                 continue
             elif chunk == '<answer>':
                 type = 'answer_chunk'
                 continue
-            if type == 'thinking_chunk':
-                think_token_count += 1
 
             yield fmt_msg(type, chunk)
-
-        if user_uuid:
-            cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-
-            if not os.path.exists('./server_log/'):
-                os.mkdir('./server_log/')
-
-            with open(f'./server_log/{user_uuid}.txt', 'a') as f:
-                f.write(f"[{cur_time}] [temperature={temperature}, top_p={top_p}] {chat_template}{full_response}\n")
     except Exception as e:
         print(f"Error during model generation: {e}")
         yield fmt_msg('error', f'Internal server error: {e}')

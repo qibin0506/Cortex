@@ -96,7 +96,7 @@
                         <h1 class="text-xl font-bold text-white">Cortex</h1>
                         <p class="text-xs text-gray-400 mt-1">Model: Cotex-0.6B-A0.2B</p>
                     </div>
-                    <a href="https://github.com/qibin0506/Cortex" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200" title="View on GitHub">
+                    <a href="https://github.com/qibin0506" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors duration-200" title="View on GitHub">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                     </a>
                 </div>
@@ -138,7 +138,7 @@
                                     </div>
                                     <input type="number" id="temperature-input" min="0" max="2" step="0.05" class="w-20 text-center text-sm font-mono bg-[#131314] border border-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-1">
                                 </div>
-                                <input id="temperature-slider" type="range" min="0" max="2" value="0.95" step="0.05" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                <input id="temperature-slider" type="range" min="0" max="2" value="1.0" step="0.05" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                             </div>
                             <!-- Top_p Slider -->
                             <div class="space-y-2 pt-4 mt-4 border-t border-gray-700/50">
@@ -155,7 +155,7 @@
                                     </div>
                                     <input type="number" id="top-p-input" min="0" max="1" step="0.05" class="w-20 text-center text-sm font-mono bg-[#131314] border border-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-1">
                                 </div>
-                                <input id="top-p-slider" type="range" min="0" max="1" value="0.75" step="0.05" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                <input id="top-p-slider" type="range" min="0" max="1" value="0.95" step="0.05" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                             </div>
                             <!-- Thinking Budget -->
                             <div class="space-y-3 pt-4 mt-4 border-t border-gray-700/50">
@@ -178,9 +178,9 @@
                                 <div id="thinking-budget-slider-container" class="hidden space-y-2">
                                     <div class="flex justify-between items-center">
                                          <label for="thinking-budget-slider" class="text-xs text-gray-400">设置预算值</label>
-                                         <input type="number" id="thinking-budget-input" min="128" max="512" step="1" class="w-20 text-center text-sm font-mono bg-[#131314] border border-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-1">
+                                         <input type="number" id="thinking-budget-input" min="128" max="1024" step="1" class="w-20 text-center text-sm font-mono bg-[#131314] border border-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 p-1">
                                     </div>
-                                    <input id="thinking-budget-slider" type="range" min="128" max="512" value="256" step="1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                                    <input id="thinking-budget-slider" type="range" min="128" max="1024" value="512" step="1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
                                 </div>
                             </div>
                         </div>
@@ -242,7 +242,7 @@
             let temperature = parseFloat(temperatureSlider.value);
             let topP = parseFloat(topPSlider.value);
             let isThinkingBudgetEnabled = false; // Default off
-            let thinkingBudgetValue = parseInt(thinkingBudgetSlider.value, 10); // Default value
+            let thinkingBudgetValue = parseInt(thinkingBudgetSlider.value, 512); // Default value
 
             // --- 函数: 初始化参数控制器 ---
             const initializeParameters = () => {
@@ -265,7 +265,7 @@
                 });
                 temperatureInput.addEventListener('change', (e) => {
                     let value = parseFloat(e.target.value);
-                    if (isNaN(value)) { value = 0.95; }
+                    if (isNaN(value)) { value = 1.0; }
                     const clampedValue = Math.max(0, Math.min(2, value));
                     temperature = clampedValue;
                     temperatureInput.value = clampedValue.toFixed(2);
@@ -280,7 +280,7 @@
                 });
                 topPInput.addEventListener('change', (e) => {
                     let value = parseFloat(e.target.value);
-                    if (isNaN(value)) { value = 0.75; }
+                    if (isNaN(value)) { value = 0.95; }
                     const clampedValue = Math.max(0, Math.min(1, value));
                     topP = clampedValue;
                     topPInput.value = clampedValue.toFixed(2);
@@ -353,8 +353,14 @@
             }
 
             async function sendMessage(text) {
+                if (isThinkingEnabled) {
+                    is_think = " /think";
+                } else {
+                    is_think = " /no think";
+                }
+
                 const userHtml = `
-                    <div class="flex items-start gap-4 my-6 justify-end" data-role="user" data-content="${text.replace(/"/g, '&quot;')}">
+                    <div class="flex items-start gap-4 my-6 justify-end" data-think="${is_think}" data-role="user" data-content="${text.replace(/"/g, '&quot;')}">
                         <div class="bg-blue-600 p-4 rounded-xl rounded-br-none prose prose-invert max-w-none">
                             ${marked.parse(text)}
                         </div>
@@ -379,7 +385,12 @@
                     const role = msg.dataset.role;
                     const content = msg.dataset.content;
                     if (role && content) {
-                         history.push({ role: role, content: content });
+                         if (role == 'user') {
+                            const think_label = msg.dataset.think
+                            history.push({ role: role, content: content + think_label });
+                         } else {
+                            history.push({ role: role, content: content });
+                         }
                     }
                 });
                 return history;

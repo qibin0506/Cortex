@@ -1,5 +1,5 @@
-from llm_trainer import SFTTrainer
-from utils import init_env, get_sft_config, get_eval_prompt
+from llm_trainer import SFTTrainer, TrainerTools
+from utils import init_env, get_cot_config, get_eval_prompt
 
 
 if __name__ == '__main__':
@@ -15,7 +15,7 @@ if __name__ == '__main__':
     ]
 
     trainer = SFTTrainer(
-        train_config=get_sft_config(),
+        train_config=get_cot_config(),
         eval_prompts=eval_prompts
     )
 
