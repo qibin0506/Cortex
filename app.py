@@ -16,6 +16,16 @@ elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
     device = "mps"
 
 dtype = torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float16
+model_name = 'dpo.bin'
+
+if not os.path.exists(f'./{model_name}'):
+    from downloader import simple_download
+    print(f'自动下载模型 https://www.modelscope.cn/models/qibin0506/Cortex-V2/resolve/master/{model_name}')
+    simple_download(
+        f'https://www.modelscope.cn/models/qibin0506/Cortex-V2/resolve/master/{model_name}',
+        f'./{model_name}'
+    )
+    print('模型下载完毕')
 
 model = LlmModel(get_model_config(long_context=True)).to(device=device, dtype=dtype)
 model.load_state_dict(torch.load('./dpo.bin', weights_only=True))

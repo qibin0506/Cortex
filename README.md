@@ -21,8 +21,7 @@ Cortex V2更新如下：
 1. 确保本机已安装python3
 2. clone或下载本项目
 3. 安装依赖 `pip3 install -r requirements.txt`
-4. 下载checkpoint [https://www.modelscope.cn/models/qibin0506/Cortex-V2/resolve/master/dpo.bin](https://www.modelscope.cn/models/qibin0506/Cortex-V2/resolve/master/dpo.bin)，并放置到项目根目录
-5. 执行 `python3 app.py`运行项目，访问链接[http://0.0.0.0:8080/](http://0.0.0.0:8080/) 即可体验
+4. 执行 `python3 app.py`运行项目，首次访问会下载模型文件，等待服务准备完成后，访问链接[http://0.0.0.0:8080/](http://0.0.0.0:8080/) 即可体验
 
 ### 技术细节
 #### 模型和训练代码
