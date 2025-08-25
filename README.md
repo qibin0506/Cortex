@@ -4,6 +4,8 @@ Cortex V2更新如下：
 2. 使用更先进的训练方法。
 3. 新增思考模式控制，可通过添加/think和/no think控制是否思考。
 4. 新增思考预算功能，可控制思考token长度。
+   
+Cortex V1版本：[https://github.com/qibin0506/Cortex/tree/v1](https://github.com/qibin0506/Cortex/tree/v1)
 
 ---
 
