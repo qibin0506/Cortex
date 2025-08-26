@@ -1,4 +1,16 @@
-# Cortex V2
+<div align="center">
+    <img alt="created by gemini" src="./images/logo.png" style="width: 30%">
+</div>
+
+<div align="center">
+
+![visitors](https://visitor-badge.laobi.icu/badge?page_id=qibin0506/Cortex)
+[![GitHub Repo stars](https://img.shields.io/github/stars/qibin0506/Cortex?style=social)](https://github.com/qibin0506/Cortex/stargazers)
+[![GitHub Code License](https://img.shields.io/github/license/qibin0506/Cortex)](LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/qibin0506/Cortex)](https://github.com/qibin0506/Cortex/commits/master)
+[![GitHub pull request](https://img.shields.io/badge/PRs-welcome-blue)](https://github.com/qibin0506/Cortex/pulls)
+</div>
+
 Cortex V2更新如下：
 1. 替换预训练数据集，使用[序列猴子通用文本数据集](https://github.com/mobvoi/seq-monkey-data/blob/main/docs/pretrain_open_corpus.md)进行预训练。
 2. 使用更先进的训练方法。
