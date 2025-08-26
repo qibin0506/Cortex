@@ -19,7 +19,6 @@ Cortex V2更新如下：
    
 Cortex V1版本：[https://github.com/qibin0506/Cortex/tree/v1](https://github.com/qibin0506/Cortex/tree/v1)
 
----
 
 | 思考模式 | 非思考模式 | 思考预算 |
 |----------|----------|----------|
@@ -28,8 +27,6 @@ Cortex V1版本：[https://github.com/qibin0506/Cortex/tree/v1](https://github.c
 **模型尺寸：0.6B，MoE推理激活参数0.2B**
 
 本项目提供训练各个阶段checkpoint，可按需下载。下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)
-
----
 
 ### 快速开始
 1. 确保本机已安装python3
@@ -68,3 +65,10 @@ checkpoint下载：[https://www.modelscope.cn/models/qibin0506/Cortex-V2/files](
 1. 确定继续训练的阶段，修改`file_dataset.py`中对应阶段的FileDataset中的文件，然后使用`smart_train`进行训练，例如重新进行dpo，则执行`smart_train train_dpo.py`
 2. 本项目GSPO阶段是在4x5090进行训练，其他阶段都是在4x4090进行训练，同时`utils.py`中的配置数据也是按照对应硬件配置确定，如有不同的训练设备可自行修改`utils.py`进行适配。
 3. `file_dataset.py`文件用来管理数据集文件，可按需修改，数据集文件会自动下载，使用完成后会自动删除，无需人工管理。
+
+---
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date&theme=dark"/>
+  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date"/>
+  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date"/>
+</picture>
