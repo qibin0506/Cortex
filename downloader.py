@@ -132,6 +132,9 @@ class MultiThreadDownloader:
 
 
 def start_download(url, file_path):
+    dir_path = os.path.dirname(file_path)
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
     num_threads = 8 # 1
     MultiThreadDownloader(url=url, file_path=file_path, num_threads=num_threads).download()
 
