@@ -74,10 +74,10 @@ class MultiThreadDownloader:
         # ... 此方法无改动 ...
         headers = {'Range': f'bytes={start}-{end}'}
         for attempt in range(self.max_retries):
+            bytes_downloaded_before_write = 0
             try:
                 response = requests.get(self.url, headers=headers, stream=True, timeout=20)
                 response.raise_for_status()
-                bytes_downloaded_before_write = 0
                 with open(self.file_path, 'rb+') as f:
                     f.seek(start)
                     for chunk in response.iter_content(chunk_size=8192):
