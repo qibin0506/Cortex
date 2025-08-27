@@ -143,6 +143,10 @@ def simple_download(url: str, dst: str, chunk_size=1024 * 1024, retry_count=0):
     if retry_count > 2 or os.path.exists(dst):
         return
 
+    dir_path = os.path.dirname(dst)
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+
     try:
         with requests.get(url, stream=True, timeout=10) as r:
             r.raise_for_status()
