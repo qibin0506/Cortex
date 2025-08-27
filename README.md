@@ -1,5 +1,5 @@
 <div align="center">
-    <img alt="created by gemini" src="./images/logo.png" style="width: 50%">
+    <img alt="created by gemini" src="./images/logo.png" style="width: 70%">
 </div>
 
 <div align="center">
