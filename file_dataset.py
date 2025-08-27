@@ -2,7 +2,7 @@ import os
 import threading
 from llm_trainer import FileDataset, TrainerTools
 from constant import data_root_dir
-from downloader import start_download
+from downloader import simple_download
 
 
 class FileDatasetBase(FileDataset):
@@ -21,8 +21,7 @@ class FileDatasetBase(FileDataset):
         if not os.path.exists(file_path):
             if TrainerTools().parallel.is_main_process:
                 print(f"正在下载{file_path}")
-                start_download(self.download_url.format(self.file_names[idx]), file_path)
-                # _download(self.download_url.format(self.file_names[idx]), file_path)
+                simple_download(self.download_url.format(self.file_names[idx]), file_path)
 
             TrainerTools().parallel.wait()
 
@@ -33,7 +32,7 @@ class FileDatasetBase(FileDataset):
             if os.path.exists(dst_file):
                 os.remove(dst_file)
 
-            threading.Thread(target=start_download, args=(self.download_url.format(next_file), dst_file)).start()
+            threading.Thread(target=simple_download, args=(self.download_url.format(next_file), dst_file)).start()
 
         # 删除前一个文件
         if idx > 0 and TrainerTools().parallel.is_main_process:
