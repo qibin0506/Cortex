@@ -290,8 +290,8 @@ def get_mix_config():
 
 def get_dpo_config():
     return _get_train_config(
-        n_epochs=1,
-        real_batch_size=4,
+        n_epochs=2,
+        real_batch_size=2,
         file_dataset=DPOFileDataset(),
         model_config=get_model_config(long_context=True),
         train_stage='dpo'
