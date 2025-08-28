@@ -144,8 +144,9 @@ def simple_download(url: str, dst: str, chunk_size=1024 * 1024, retry_count=0):
         return
 
     dir_path = os.path.dirname(dst)
-    if not os.path.exists(dst):
-        os.makedirs(dst)
+    if not os.path.exists(dir_path):
+        print(f"创建文件夹:{dir_path}, 用存储{dst}") 
+        os.makedirs(dir_path)
 
     try:
         with requests.get(url, stream=True, timeout=10) as r:
