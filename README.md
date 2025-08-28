@@ -14,7 +14,10 @@
 ### 从零构建MoE大模型：从预训练到DPO的完整实践
 ---
 
-Cortex V2更新内容：
+2025.8.28 更新内容：
+1. dpo训练修改为2个epoch，同时增加nll_loss，并重新训练dpo。
+
+2025.8.23 更新内容：
 1. 替换预训练数据集，使用[序列猴子通用文本数据集](https://github.com/mobvoi/seq-monkey-data/blob/main/docs/pretrain_open_corpus.md)进行预训练。
 2. 使用更先进的训练方法。
 3. 新增思考模式控制，可通过添加/think和/no think控制是否思考。
