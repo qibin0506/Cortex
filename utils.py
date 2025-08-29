@@ -199,7 +199,8 @@ def _get_train_config(
             grpo_steps=-1
         )
 
-    lr_config = train_configs.LrConfig(
+    optim_config = train_configs.OptimConfig(
+        optim_type='lion',
         enable_lr_scheduler=True,
         initial_lr=initial_lr,
         warmup_iters=warmup_iters,
@@ -227,7 +228,7 @@ def _get_train_config(
         loss_config=train_configs.LossConfig(),
         dpo_config=dpo_config,
         grpo_config=grpo_config,
-        lr_config=lr_config,
+        optim_config=optim_config,
         ds_config=ds_config,
         data_loader_config=data_loader_config,
         kd_config=None,
