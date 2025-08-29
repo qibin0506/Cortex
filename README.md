@@ -51,7 +51,7 @@ Cortex V1版本：[https://github.com/qibin0506/Cortex/tree/v1](https://github.c
 2. 训练代码支持Pretrain、SFT、GRPO、GSPO、DPO等训练方式，代码完成度较高，上手简单，项目开放在[https://github.com/qibin0506/llm_trainer](https://github.com/qibin0506/llm_trainer)
 
 #### 训练细节
-Cortex V2采用更加先进的训练方式进行训练，具体情况如下；
+Cortex V2采用更加先进的训练方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py 1,2,3`。训练文件名称可以参考下面详细介绍。
 
 ##### 预训练
 预训练过程采用两阶段训练模式
