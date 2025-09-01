@@ -14,6 +14,7 @@
 ### 从零构建MoE大模型：从预训练到DPO的完整实践
 ---
 
+### 更新日志
 2025.8.29 更新内容：
 1. 优化器从Adam替换为Lion，训练更省显存；需升级llm_trainer到0.8.0版本。
 
@@ -26,17 +27,16 @@
 2. 使用更先进的训练方法。
 3. 新增思考模式控制，可通过添加/think和/no think控制是否思考。
 4. 新增思考预算功能，可控制思考token长度。
-   
-Cortex V1版本：[https://github.com/qibin0506/Cortex/tree/v1](https://github.com/qibin0506/Cortex/tree/v1)
 
+---
 
+### 效果预览
 | 思考模式 | 非思考模式 | 思考预算 |
 |----------|----------|----------|
 | <img src="./images/screenshot_1.png"> | <img src="./images/screenshot_2.png"> | <img src="./images/screenshot_3.png"> |
 
-**模型尺寸：0.6B，MoE推理激活参数0.2B**
-
-本项目提供训练各个阶段checkpoint，可按需下载。下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)
+### 模型简介
+Cortex V2是一个**0.6B**的MoE LLM，推理时激活参数为**0.2B**。Cortex已完成预训练到DPO全流程训练，并提供训练各个阶段checkpoint下载，下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)
 
 ### 快速开始
 1. 确保本机已安装python3
