@@ -16,6 +16,7 @@
 ## 模型简介
 Cortex V2是一个**0.6B**的MoE LLM，推理时激活参数为**0.2B**。Cortex已完成预训练到DPO全流程训练，并提供训练各个阶段checkpoint下载，下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)
 
+
 ## 更新日志
 2025.8.29 更新内容：
 1. 优化器从Adam替换为Lion，训练更省显存；需升级llm_trainer到0.8.0版本。
@@ -23,23 +24,25 @@ Cortex V2是一个**0.6B**的MoE LLM，推理时激活参数为**0.2B**。Cortex
 2025.8.28 更新内容：
 1. dpo训练修改为2个epoch，同时增加nll_loss，并重新训练dpo。
 
-
 2025.8.23 更新内容：
 1. 替换预训练数据集，使用[序列猴子通用文本数据集](https://github.com/mobvoi/seq-monkey-data/blob/main/docs/pretrain_open_corpus.md)进行预训练。
 2. 使用更先进的训练方法。
 3. 新增思考模式控制，可通过添加/think和/no think控制是否思考。
 4. 新增思考预算功能，可控制思考token长度。
 
+
 ## 效果预览
 | 思考模式 | 非思考模式 | 思考预算 |
 |----------|----------|----------|
 | <img src="./images/screenshot_1.png"> | <img src="./images/screenshot_2.png"> | <img src="./images/screenshot_3.png"> |
+
 
 ## 快速开始
 1. 确保本机已安装python3
 2. clone或下载本项目
 3. 安装依赖 `pip3 install -r requirements.txt`
 4. 执行 `python3 app.py`运行项目，首次访问会下载模型文件，等待服务准备完成后，访问链接[http://0.0.0.0:8080/](http://0.0.0.0:8080/) 即可体验
+
 
 ## 技术细节
 ### 模型和训练代码
@@ -73,8 +76,8 @@ checkpoint下载：[https://www.modelscope.cn/models/qibin0506/Cortex-V2/files](
 2. 本项目GSPO阶段是在4x5090进行训练，其他阶段都是在4x4090进行训练，同时`utils.py`中的配置数据也是按照对应硬件配置确定，如有不同的训练设备可自行修改`utils.py`进行适配。
 3. `file_dataset.py`文件用来管理数据集文件，可按需修改，数据集文件会自动下载，使用完成后会自动删除，无需人工管理。
 
-## star-history
 
+## star-history
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date&theme=dark"/>
   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date"/>
