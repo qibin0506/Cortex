@@ -53,7 +53,24 @@ Cortex V2是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时�
 2. 训练代码支持Pretrain、SFT、GRPO、GSPO、DPO等训练方式，代码完成度较高，上手简单，项目开放在[https://github.com/qibin0506/llm_trainer](https://github.com/qibin0506/llm_trainer)
 
 #### 训练细节
-Cortex V2采用更加先进的训练方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py --include localhost:1,2,4`。训练文件名称可以参考下面详细介绍。
+Cortex V2采用多阶段预训练和多阶段后训练的方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py --include localhost:1,2,4`。训练文件名称可以参考下面详细介绍。
+
+***注意：每个阶段训练完成后需要处理一下保存的checkpoint，手动保存一下`log`目录下的内容，然后删除`log`目录。例如，使用deepspeed训练时需要将`ckpt_dir`里的checkpoint转换为bin文件保存下来，然后删除`log`和`ckpt_dir`目录。***
+``` shell
+# 如果需要，复制一份log日志存档
+cp -r ./log ./log_pretrain0/
+# 删除log
+rm -fr ./log
+# 开始处理checkpoint
+cd ./ckpt_dir
+# 转换checkpoint
+python3 zero_to_fp32.py ./ ../
+cd ..
+# ckpt_dir没用了，可以直接删除
+rm-fr ./ckpt_dir
+# 下次训练，会自动加载last_checkpoint.bin里的权重，参考utils.py文件里的init_state_dict设置
+mv pytorch_model.bin last_checkpoint.bin
+```
 
 #### 预训练
 预训练过程采用两阶段训练模式
