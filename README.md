@@ -21,7 +21,7 @@ Cortex V2是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时�
 
 ## 更新日志
 2025.8.29 更新内容：
-1. 优化器从Adam替换为Lion，训练更省显存；需升级llm_trainer到0.8.1版本。
+1. 优化器从Adam替换为Lion，训练更省显存；需升级llm_trainer到0.8.2版本。
 
 2025.8.28 更新内容：
 1. dpo训练修改为2个epoch，同时增加nll_loss，并重新训练dpo。
@@ -53,7 +53,7 @@ Cortex V2是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时�
 2. 训练代码支持Pretrain、SFT、GRPO、GSPO、DPO等训练方式，代码完成度较高，上手简单，项目开放在[https://github.com/qibin0506/llm_trainer](https://github.com/qibin0506/llm_trainer)
 
 #### 训练细节
-Cortex V2采用更加先进的训练方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py 1,2,3`。训练文件名称可以参考下面详细介绍。
+Cortex V2采用更加先进的训练方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py --include localhost:1,2,4`。训练文件名称可以参考下面详细介绍。
 
 #### 预训练
 预训练过程采用两阶段训练模式
