@@ -23,6 +23,7 @@ Cortex V2是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时�
 2025.9.8 更新内容：
 1. 新增57M参数量的[蒸馏模型](https://www.modelscope.cn/models/qibin0506/Cortex-V2/file/view/master/distill.bin?status=2)，同时开源logits蒸馏训练代码: `train_distill.py`
 2. 训练数据集和app中的模型自动下载逻辑替换为使用modelscope下载。
+3. **预训练数据集改为使用匠心大数据SFT构造，放弃序列猴子数据，原因是：使用序列猴子后模型能力出现倒退现象。总结经验为：对于一个0.6B的小模型高质量的预训练数据比通用数据更合适。** 自己训练的朋友，可重新拉取代码后进行训练
 
 2025.8.29 更新内容：
 1. 优化器从Adam替换为Lion，训练更省显存；需升级llm_trainer到0.8.2版本。
