@@ -88,3 +88,11 @@ class MixFileDataset(FileDatasetBase):
 class DPOFileDataset(FileDatasetBase):
     def __init__(self):
         super().__init__(['dpo.pkl'])
+
+
+class DistillDataset(FileDatasetBase):
+    def __init__(self):
+        super().__init__([
+            'cot_sft.pkl',
+            'mix_sft.pkl'
+        ])

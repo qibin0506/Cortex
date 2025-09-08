@@ -75,6 +75,28 @@ def get_model_config(long_context = False):
         )
     )
 
+
+def get_small_model_config():
+    max_position_embeddings = 2048
+
+    return ModelConfig(
+        vocab_size=TrainerTools().tokenizer.vocab_size,
+        hidden_size=512,
+        intermediate_size=1024,
+        moe_intermediate_size=-1,
+        moe_n_dense_layer=-1,
+        num_hidden_layers=4,
+        num_attention_heads=8,
+        num_key_value_heads=2,
+        max_position_embeddings=max_position_embeddings,
+        attention_implementation='auto',
+        rope_config=RoPEConfig(
+            rope_type='default',
+            rope_theta=1e6
+        ),
+    )
+
+
 def calc_lr_schedular_args(
         epochs,
         all_data_size,
@@ -105,6 +127,9 @@ def _get_train_config(
         model_config: ModelConfig,
         train_stage: str
 ):
+    init_state_dict = torch.load('./last_checkpoint.bin', weights_only=True)\
+        if os.path.exists('./last_checkpoint.bin') and train_stage != 'distill' else None
+
     gradient_accumulation_steps = 3
     eval_batch_interval = 10 if train_stage == 'grpo' else 100
 
@@ -188,6 +213,16 @@ def _get_train_config(
             gradient_accumulation_steps=gradient_accumulation_steps,
             grpo_steps=-1
         )
+    elif train_stage == 'distill':
+        initial_lr = 1e-5 * lr_mul
+        max_lr = 5e-5 * lr_mul
+        warmup_iters, period = calc_lr_schedular_args(
+            epochs=n_epochs,
+            all_data_size=297288,
+            batch_size=real_batch_size,
+            gradient_accumulation_steps=gradient_accumulation_steps,
+            grpo_steps=-1
+        )
     else: # pretrain_stage1 230087
         initial_lr = 1e-4 * lr_mul
         max_lr = 5e-4 * lr_mul
@@ -216,7 +251,22 @@ def _get_train_config(
         data_loader_drop_last=True
     )
 
-    init_state_dict = torch.load('./last_checkpoint.bin', weights_only=True) if os.path.exists('./last_checkpoint.bin') else None
+    if train_stage == 'distill':
+        from llm_model import LlmModel
+        teacher_model = LlmModel(get_model_config(long_context=True))
+        teacher_model.to(device=TrainerTools().parallel.device, dtype=torch.float16)
+        teacher_model.load_state_dict(torch.load('./last_checkpoint.bin', weights_only=True), strict=False)
+        teacher_model.eval()
+        teacher_model.requires_grad_(False)
+
+        def kd_teacher_logits_provider(inputs: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+            return teacher_model(inputs, attention_mask=attention_mask)['logits']
+
+        kd_config = train_configs.KDConfig(
+            teacher_logits_provider=kd_teacher_logits_provider
+        )
+    else:
+        kd_config = None
 
     train_config = train_configs.TrainConfig(
         n_epochs=n_epochs,
@@ -231,7 +281,7 @@ def _get_train_config(
         optim_config=optim_config,
         ds_config=ds_config,
         data_loader_config=data_loader_config,
-        kd_config=None,
+        kd_config=kd_config,
         init_state_dict=init_state_dict,
         eval_config=train_configs.EvalConfig()
     )
@@ -296,4 +346,14 @@ def get_dpo_config():
         file_dataset=DPOFileDataset(),
         model_config=get_model_config(long_context=True),
         train_stage='dpo'
+    )
+
+
+def get_distill_config():
+    return _get_train_config(
+        n_epochs=2,
+        real_batch_size=6,
+        file_dataset=DistillDataset(),
+        model_config=get_small_model_config(),
+        train_stage="distill"
     )
