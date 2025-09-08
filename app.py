@@ -21,7 +21,7 @@ model_name = 'dpo.bin'
 
 if not os.path.exists(f'./{model_name}'):
     from modelscope import snapshot_download
-    model_dir = snapshot_download(
+    snapshot_download(
         f'qibin0506/Cortex-V2',
         allow_file_pattern=[model_name],
         local_dir='./'
