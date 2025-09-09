@@ -58,16 +58,6 @@ class FileDatasetBase(FileDataset):
 
 class PretrainStage0FileDataset(FileDatasetBase):
     def __init__(self):
-        super().__init__([
-            'pretrain_short_0.pkl',
-            'pretrain_short_1.pkl',
-            'pretrain_short_2.pkl',
-            'pretrain_short_3.pkl',
-            'pretrain_short_4.pkl',
-            'pretrain_short_5.pkl',
-            'pretrain_short_6.pkl',
-            'pretrain_short_7.pkl',
-        ])
         # super().__init__([
         #     'mobvoi_seq_monkey_short_0.pkl',
         #     'mobvoi_seq_monkey_short_1.pkl',
