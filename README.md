@@ -14,9 +14,9 @@
 </div>
 
 ## 模型简介
-Cortex V2是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时激活参数仅为**0.2B**。目前已完成预训练到DPO全流程训练，并提供训练各个阶段checkpoint下载，下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)。
+Cortex 2.0是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时激活参数仅为**0.2B**。目前已完成预训练到DPO全流程训练，并提供训练各个阶段checkpoint下载，下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)。
 
-🔥Cortex V3版本目前正在筹备中，目标是通过加大模型参数和预训练数据质量和数量，整体提升模型能力。**如果你有闲置算力可联系我[[qibin0506@gmail.com](mailto:qibin0506@gmail.com)]进行共创。**
+🔥Cortex 3.0版本目前正在筹备中，目标是通过加大模型参数和预训练数据质量和数量，整体提升模型能力。**如果你有闲置算力可联系我[[qibin0506@gmail.com](mailto:qibin0506@gmail.com)]进行共创。**
 
 
 ## 更新日志
@@ -57,7 +57,7 @@ Cortex V2是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时�
 2. 训练代码支持Pretrain、SFT、GRPO、GSPO、DPO等训练方式，代码完成度较高，上手简单，项目开放在[https://github.com/qibin0506/llm_trainer](https://github.com/qibin0506/llm_trainer)
 
 #### 训练细节
-Cortex V2采用多阶段预训练和多阶段后训练的方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py --include localhost:1,2,4`。训练文件名称可以参考下面详细介绍。
+Cortex 2.0采用多阶段预训练和多阶段后训练的方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py --include localhost:1,2,4`。训练文件名称可以参考下面详细介绍。
 
 ***注意：每个阶段训练完成后需要处理一下保存的checkpoint，手动保存一下`log`目录下的内容，然后删除`log`目录。例如，使用deepspeed训练时需要将`ckpt_dir`里的checkpoint转换为bin文件保存下来，然后删除`log`和`ckpt_dir`目录。***
 ``` shell
