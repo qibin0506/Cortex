@@ -58,27 +58,26 @@ class FileDatasetBase(FileDataset):
 
 class PretrainStage0FileDataset(FileDatasetBase):
     def __init__(self):
-        # super().__init__([
-        #     'mobvoi_seq_monkey_short_0.pkl',
-        #     'mobvoi_seq_monkey_short_1.pkl',
-        #     'mobvoi_seq_monkey_short_2.pkl',
-        #     'mobvoi_seq_monkey_short_3.pkl',
-        #     'mobvoi_seq_monkey_short_4.pkl',
-        #     'mobvoi_seq_monkey_short_5.pkl',
-        #     'mobvoi_seq_monkey_short_6.pkl',
-        #     'mobvoi_seq_monkey_short_7.pkl',
-        #     'mobvoi_seq_monkey_short_8.pkl',
-        #     'wikipedia.pkl',
-        # ])
+        super().__init__([
+            'mobvoi_seq_monkey_short_0.pkl',
+            'mobvoi_seq_monkey_short_1.pkl',
+            'mobvoi_seq_monkey_short_2.pkl',
+            'mobvoi_seq_monkey_short_3.pkl',
+            'mobvoi_seq_monkey_short_4.pkl',
+            'mobvoi_seq_monkey_short_5.pkl',
+            'mobvoi_seq_monkey_short_6.pkl',
+            'mobvoi_seq_monkey_short_7.pkl',
+            'mobvoi_seq_monkey_short_8.pkl',
+            'wikipedia.pkl',
+        ])
 
 
 class PretrainStage1FileDataset(FileDatasetBase):
     def __init__(self):
-        super().__init__(['pretrain_long.pkl'])
-        # super().__init__([
-        #     'mobvoi_seq_monkey_long_0.pkl',
-        #     'mobvoi_seq_monkey_long_1.pkl'
-        # ])
+        super().__init__([
+            'mobvoi_seq_monkey_long_0.pkl',
+            'mobvoi_seq_monkey_long_1.pkl'
+        ])
 
 
 class COTFileDataset(FileDatasetBase):
