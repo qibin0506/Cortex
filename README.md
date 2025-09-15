@@ -18,9 +18,6 @@ Cortex 2.0是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时�
 
 🔥Cortex 2.5正在训练中，使用更高质量的预训练数据集，预期整体提升模型能力。
 
-🔥Cortex 3.0版本目前正在筹备中，目标是通过加大模型参数和预训练数据质量和数量，整体提升模型能力。**如果你有闲置算力可联系我[[qibin0506@gmail.com](mailto:qibin0506@gmail.com)]进行共创。**
-
-
 ## 更新日志
 2025.9.8 更新内容：
 1. 新增57M参数量的[蒸馏模型](https://www.modelscope.cn/models/qibin0506/Cortex-V2/file/view/master/distill.bin?status=2)，同时开源logits蒸馏训练代码: `train_distill.py`
