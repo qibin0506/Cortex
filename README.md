@@ -14,7 +14,7 @@
 </div>
 
 ## 模型简介
-Cortex 2.0是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时激活参数仅为**0.2B**。目前已完成预训练到DPO全流程训练，并提供训练各个阶段checkpoint下载，下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)。
+Cortex是一个个人可承担训练成本的**0.6B**的MoE LLM，推理时激活参数仅为**0.2B**。目前已完成预训练到DPO全流程训练，并提供训练各个阶段checkpoint下载，下载地址：[https://www.modelscope.cn/models/qibin0506/Cortex-V2](https://www.modelscope.cn/models/qibin0506/Cortex-V2)。
 
 🔥Cortex 2.5正在训练中，使用更高质量的预训练数据集，预期整体提升模型能力。
 

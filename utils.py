@@ -2,10 +2,8 @@ import torch
 import math
 from llm_trainer import train_configs
 from llm_model import ModelConfig, RoPEConfig, MoEConfig
-from constant import *
 from file_dataset import *
 import os
-import random
 
 
 def init_env():
@@ -35,7 +33,7 @@ def get_eval_prompt(content: str, add_think_tag = False, no_think = False) -> st
         content = f'{content} /no think' if no_think else f'{content} /think'
 
     chat_template = [
-        {'role': 'system', 'content': random.choice(GENERAL_SYSTEM_PROMPTS)},
+        {'role': 'system', 'content': ' '},
         {'role': 'user', 'content': content}
     ]
 
@@ -53,8 +51,6 @@ def get_model_config(long_context = False):
         vocab_size=TrainerTools().tokenizer.vocab_size,
         hidden_size=768,
         intermediate_size=2048,
-        moe_intermediate_size=1024,
-        moe_n_dense_layer=1,
         num_hidden_layers=24,
         num_attention_heads=12,
         num_key_value_heads=4,
@@ -66,10 +62,11 @@ def get_model_config(long_context = False):
             rope_theta=1e6
         ),
         moe_config=MoEConfig(
+            intermediate_size=1024,
+            n_dense_layer=1,
             num_experts_per_tok=2,
-            n_routed_experts=8,
             n_shared_experts=1,
-            aux_loss_alpha=0.1,
+            n_routed_experts=8,
             seq_aux=True,
             norm_topk_prob=True
         )
@@ -77,14 +74,13 @@ def get_model_config(long_context = False):
 
 
 def get_small_model_config():
+    # max_position_embeddings: 512 -> 2048
     max_position_embeddings = 2048
 
     return ModelConfig(
         vocab_size=TrainerTools().tokenizer.vocab_size,
         hidden_size=512,
         intermediate_size=1024,
-        moe_intermediate_size=-1,
-        moe_n_dense_layer=-1,
         num_hidden_layers=4,
         num_attention_heads=8,
         num_key_value_heads=2,
@@ -109,7 +105,7 @@ def calc_lr_schedular_args(
     if grpo_steps == -1:
         train_batch_per_world = epochs * all_data_size / batch_size / world_size / gradient_accumulation_steps
     else:
-        train_batch_per_world = epochs * (all_data_size / batch_size / world_size) * grpo_steps
+        train_batch_per_world = epochs * (all_data_size / batch_size / world_size)
 
     warmup_iters = int(0.1 * train_batch_per_world)
     cosine_annealing_batches = math.ceil(train_batch_per_world - warmup_iters)
@@ -119,7 +115,6 @@ def calc_lr_schedular_args(
 
     return warmup_iters, cosine_annealing_batches
 
-
 def _get_train_config(
         n_epochs: int,
         real_batch_size: int,
@@ -127,8 +122,9 @@ def _get_train_config(
         model_config: ModelConfig,
         train_stage: str
 ):
-    init_state_dict = torch.load('./last_checkpoint.bin', weights_only=True)\
-        if os.path.exists('./last_checkpoint.bin') and train_stage != 'distill' else None
+    last_checkpoint = './last_checkpoint.bin'
+    init_state_dict = torch.load(last_checkpoint, weights_only=True)\
+        if os.path.exists(last_checkpoint) and train_stage != 'distill' else None
 
     gradient_accumulation_steps = 3
     eval_batch_interval = 10 if train_stage == 'grpo' else 100
@@ -148,7 +144,7 @@ def _get_train_config(
 
     grpo_config = train_configs.GRPOConfig(
         grpo_steps=4,
-        group_size=16,
+        group_size=8,
         loss_beta=0.0,
         loss_clip_eps=3e-4,
         loss_clip_eps_high=4e-4,
@@ -156,7 +152,7 @@ def _get_train_config(
         gen_max_new_tokens=1024,
         gen_temperature=1.0,
         gen_k=None,
-        gen_p=0.85,
+        gen_p=0.95,
         gen_suppress_tokens=None,
     ) if train_stage == 'grpo' else None
 
@@ -168,7 +164,7 @@ def _get_train_config(
         max_lr = 5e-6
         warmup_iters, period = calc_lr_schedular_args(
             epochs=n_epochs,
-            all_data_size=8792,
+            all_data_size=8000, # 8792
             batch_size=real_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
             grpo_steps=1
@@ -178,7 +174,7 @@ def _get_train_config(
         max_lr = 5e-6
         warmup_iters, period = calc_lr_schedular_args(
             epochs=n_epochs,
-            all_data_size=19942,
+            all_data_size=18000, # 18813
             batch_size=real_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
             grpo_steps=-1
@@ -188,7 +184,7 @@ def _get_train_config(
         max_lr = 5e-5 * lr_mul
         warmup_iters, period = calc_lr_schedular_args(
             epochs=n_epochs,
-            all_data_size=107041,
+            all_data_size=90000, # 91856
             batch_size=real_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
             grpo_steps=-1
@@ -198,7 +194,7 @@ def _get_train_config(
         max_lr = 5e-5 * lr_mul
         warmup_iters, period = calc_lr_schedular_args(
             epochs=n_epochs,
-            all_data_size=190247,
+            all_data_size=190000, # 190247
             batch_size=real_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
             grpo_steps=-1
@@ -208,7 +204,7 @@ def _get_train_config(
         max_lr = 5e-4 * lr_mul
         warmup_iters, period = calc_lr_schedular_args(
             epochs=n_epochs,
-            all_data_size=10_000_000, # 14,062,509
+            all_data_size=10_000_000, # 10,261,536
             batch_size=real_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
             grpo_steps=-1
@@ -218,17 +214,17 @@ def _get_train_config(
         max_lr = 5e-5 * lr_mul
         warmup_iters, period = calc_lr_schedular_args(
             epochs=n_epochs,
-            all_data_size=297288,
+            all_data_size=280000, # cot + mix
             batch_size=real_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
             grpo_steps=-1
         )
-    else: # pretrain_stage1 230087
+    else:
         initial_lr = 1e-4 * lr_mul
-        max_lr = 5e-4 * lr_mul
+        max_lr = 3e-4 * lr_mul
         warmup_iters, period = calc_lr_schedular_args(
             epochs=n_epochs,
-            all_data_size=700000, # 714311
+            all_data_size=590000, # 590,630
             batch_size=real_batch_size,
             gradient_accumulation_steps=gradient_accumulation_steps,
             grpo_steps=-1
@@ -255,7 +251,7 @@ def _get_train_config(
         from llm_model import LlmModel
         teacher_model = LlmModel(get_model_config(long_context=True))
         teacher_model.to(device=TrainerTools().parallel.device, dtype=torch.float16)
-        teacher_model.load_state_dict(torch.load('./last_checkpoint.bin', weights_only=True), strict=False)
+        teacher_model.load_state_dict(torch.load('./teacher_checkpoint.bin', weights_only=True), strict=False)
         teacher_model.eval()
         teacher_model.requires_grad_(False)
 
@@ -302,7 +298,7 @@ def get_pretrain_stage0_config():
 def get_pretrain_stage1_config():
     return _get_train_config(
         n_epochs=1,
-        real_batch_size=4,
+        real_batch_size=5,
         file_dataset=PretrainStage1FileDataset(),
         model_config=get_model_config(long_context=True),
         train_stage='pretrain_stage1'
@@ -347,7 +343,6 @@ def get_dpo_config():
         model_config=get_model_config(long_context=True),
         train_stage='dpo'
     )
-
 
 def get_distill_config():
     return _get_train_config(

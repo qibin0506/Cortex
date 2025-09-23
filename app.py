@@ -5,9 +5,10 @@ import uuid
 from bottle import Bottle, request, response, run
 
 import torch
-from utils import init_env, get_model_config
+from utils import init_env, get_model_config, get_small_model_config
 from llm_model import LlmModel
 from llm_trainer import TrainerTools, streaming_generate
+import traceback
 
 init_env()
 device = "cpu"
@@ -16,19 +17,18 @@ if torch.cuda.is_available():
 elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
     device = "mps"
 
-dtype = torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float16
 model_name = 'dpo.bin'
 
 if not os.path.exists(f'./{model_name}'):
     from modelscope import snapshot_download
     snapshot_download(
-        f'qibin0506/Cortex-V2',
+        f'qibin0506/Cortex-2.5',
         allow_file_pattern=[model_name],
         local_dir='./'
     )
 
-model = LlmModel(get_model_config(long_context=True)).to(device=device, dtype=dtype)
-model.load_state_dict(torch.load('./dpo.bin', weights_only=True))
+model = LlmModel(get_model_config(long_context=True)).to(device=device)
+model.load_state_dict(torch.load(f'./{model_name}', weights_only=True))
 model.eval()
 
 app = Bottle()
@@ -103,7 +103,7 @@ def sse_chat():
         return
 
     try:
-        chat_history = [{'role':'system', 'content':'你是由QB开发的聊天助手Cortex'}, *chat_history]
+        chat_history = [{'role': 'system', 'content': ' '}, *chat_history]
         chat_template = TrainerTools().tokenizer.apply_chat_template(chat_history, tokenizer=False)
 
         if not thinking:
@@ -169,6 +169,7 @@ def sse_chat():
 
             yield fmt_msg(type, chunk)
     except Exception as e:
+        traceback.print_exc()
         print(f"Error during model generation: {e}")
         yield fmt_msg('error', f'Internal server error: {e}')
 

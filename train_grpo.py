@@ -243,7 +243,7 @@ def reward_func(prompt_ids: torch.Tensor, completion_ids: torch.Tensor, answers:
 
     rewards = []
     for i, (prompt_id, completion_id, answer) in enumerate(zip(prompt_ids, completion_ids, answers)):
-        prompt = TrainerTools().tokenizer.decode(prompt_id)
+        # prompt = TrainerTools().tokenizer.decode(prompt_id)
         completion_text = TrainerTools().tokenizer.decode(completion_id)
         completion_text = completion_text.replace('<pad>', '').strip()
         correct_answer = TrainerTools().tokenizer.decode(answer)
@@ -253,12 +253,11 @@ def reward_func(prompt_ids: torch.Tensor, completion_ids: torch.Tensor, answers:
 
         if TrainerTools().parallel.is_main_process:
             with open("./reward.txt", 'a') as f:
-                f.write(f"--- REWARD DEBUG --- {i}\n")
-                f.write(f"prompt: {prompt}\n")
-                f.write(f"Completion: {completion_text}\n")
-                f.write(f"Correct Answer: {correct_answer}\n")
                 f.write(f"Calculated Reward: {reward}\n")
-                f.write("--------------------\n")
+    
+    if TrainerTools().parallel.is_main_process:
+        with open("./reward.txt", 'a') as f:
+            f.write(f"--------\n")
 
     return rewards
 

@@ -1,4 +1,5 @@
 # Base ----------------------------------------
+torch
 transformers
 deepspeed
 sentencepiece
@@ -8,8 +9,8 @@ pyarrow
 nvitop
 pandas
 scikit-learn
-project_llm_model==0.5.3
-project_llm_trainer==0.8.3
+project_llm_model
+project_llm_trainer
 bottle
 paste
 # waitress
