@@ -231,7 +231,6 @@ def _get_train_config(
         )
 
     optim_config = train_configs.OptimConfig(
-        optim_type='lion',
         enable_lr_scheduler=True,
         initial_lr=initial_lr,
         warmup_iters=warmup_iters,
@@ -298,7 +297,7 @@ def get_pretrain_stage0_config():
 def get_pretrain_stage1_config():
     return _get_train_config(
         n_epochs=1,
-        real_batch_size=5,
+        real_batch_size=4,
         file_dataset=PretrainStage1FileDataset(),
         model_config=get_model_config(long_context=True),
         train_stage='pretrain_stage1'
