@@ -19,7 +19,7 @@
 3. 模型支持思考控制和思考预算能力，可通过添加/think和/no think控制是否启用思考模式。
 
 ## 更新日志
-🔥2025.10.10，Cortex 2.5支持**深度搜索**！
+2025.10.10，Cortex 2.5支持**深度搜索**！
 1. 可以在网页中选中【深度搜索】体验。该功能需要注册并申请[bochaai API KEY](https://open.bochaai.com/)，申请完成后修改`search.py`文件，将`<YOUR BOCHAAI API KEY>`修改为你申请的API KEY。
 
 
