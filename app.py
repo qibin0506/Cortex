@@ -9,6 +9,7 @@ from utils import init_env, get_model_config, get_small_model_config
 from llm_model import LlmModel
 from llm_trainer import TrainerTools, streaming_generate
 import traceback
+from search import get_bochaai_search_api
 
 init_env()
 device = "cpu"
@@ -38,6 +39,7 @@ with open('./static/index.html', 'r') as f:
 
 
 def fmt_msg(event, data):
+    data = data.replace('\n', '<br />')
     return f"{json.dumps({'event': event, 'data':data})}\n\n"
 
 
@@ -84,12 +86,20 @@ def sse_chat():
         top_p = payload.get('top_p')
         think_budget_enable = thinking and payload.get('think_budget_enable')
         think_budget = payload.get('think_budget')
+        deep_search = payload.get('deep_search')
 
         if not think_budget:
             think_budget_enable = False
-        
-        # 仅保留两轮对话
-        chat_history = chat_history[-3:]
+
+        if deep_search:
+            thinking = False
+            think_budget_enable = False
+            search_api = get_bochaai_search_api()
+            chat_history = chat_history[-1:]
+        else:
+            search_api = None
+            # 仅保留两轮对话
+            chat_history = chat_history[-3:]
 
         if not chat_history:
             yield fmt_msg('error', 'Chat history cannot be empty')
@@ -102,6 +112,13 @@ def sse_chat():
         chat_history = [{'role': 'system', 'content': ' '}, *chat_history]
         chat_template = TrainerTools().tokenizer.apply_chat_template(chat_history, tokenizer=False)
         chat_template = f'{chat_template}<assistant>'
+
+        if search_api:
+            search_result = search_api(chat_history[-1]['content'])
+            if search_result:
+                search_msg = f'根据用户的问题，我搜索到了如下内容：\n{search_result}。下面我需要根据搜索到的内容给到用户答案。'
+                yield fmt_msg('thinking_chunk', search_msg)
+                chat_template = f'{chat_template}<think>{search_msg}</think>'
 
         prompt_token = TrainerTools().tokenizer.encode(chat_template, unsqueeze=True)
         output_token_count = max(2048 - prompt_token.shape[-1], 0)
