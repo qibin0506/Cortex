@@ -84,16 +84,12 @@ def sse_chat():
         top_p = payload.get('top_p')
         think_budget_enable = thinking and payload.get('think_budget_enable')
         think_budget = payload.get('think_budget')
+
         if not think_budget:
             think_budget_enable = False
-
+        
         # 仅保留两轮对话
         chat_history = chat_history[-3:]
-
-        # if not thinking:
-        #     chat_history = chat_history[-5:]
-        # else:
-        #     chat_history = chat_history[-1:]
 
         if not chat_history:
             yield fmt_msg('error', 'Chat history cannot be empty')
@@ -105,11 +101,7 @@ def sse_chat():
     try:
         chat_history = [{'role': 'system', 'content': ' '}, *chat_history]
         chat_template = TrainerTools().tokenizer.apply_chat_template(chat_history, tokenizer=False)
-
-        if not thinking:
-            chat_template = f'{chat_template}<assistant><think> </think>'
-        else:
-            chat_template = f'{chat_template}<assistant><think>'
+        chat_template = f'{chat_template}<assistant>'
 
         prompt_token = TrainerTools().tokenizer.encode(chat_template, unsqueeze=True)
         output_token_count = max(2048 - prompt_token.shape[-1], 0)
