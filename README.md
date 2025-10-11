@@ -19,11 +19,11 @@
 3. 模型支持思考控制和思考预算能力，可通过添加/think和/no think控制是否启用思考模式。
 
 ## 在线体验
-本项目已在huggingface spaces部署，可以通过访问[https://huggingface.co/spaces/qibin0506/Cortex](https://huggingface.co/spaces/qibin0506/Cortex)进行体验。
+本项目已在huggingface spaces部署，可以通过访问 <a href="https://huggingface.co/spaces/qibin0506/Cortex" target="_blank">https://huggingface.co/spaces/qibin0506/Cortex</a> 进行体验。
 
 ## 更新日志
 2025.10.10，Cortex 2.5支持**深度搜索**！
-1. 可以在网页中选中【深度搜索】体验。该功能需要注册并申请[bochaai API KEY](https://open.bochaai.com/)，申请完成后修改`search.py`文件，将`<YOUR BOCHAAI API KEY>`修改为你申请的API KEY。
+1. 可以在网页中选中【深度搜索】体验。该功能需要注册并申请 <a href="https://open.bochaai.com/" target="_blank">bochaai API KEY</a>，申请完成后修改`search.py`文件，将`<YOUR BOCHAAI API KEY>`修改为你申请的API KEY。
 
 
 🔥2025.9.23，Cortex 2.5发布，完全从头重新训练，主要更新内容如下：
@@ -43,14 +43,14 @@
 1. 确保本机已安装python3
 2. clone或下载本项目
 3. 安装依赖 `pip3 install -r requirements.txt`
-4. 执行 `python3 app.py`运行项目，首次访问会下载模型文件，等待服务准备完成后，访问链接[http://0.0.0.0:8080/](http://0.0.0.0:8080/) 即可体验
+4. 执行 `python3 app.py`运行项目，首次访问会下载模型文件，等待服务准备完成后，访问链接 <a href="http://0.0.0.0:8080/)" target="_blank">http://0.0.0.0:8080/</a> 即可体验
 
 
 ## 技术细节
 ### 模型和训练代码
 本项目模型和训练代码完全开源并解耦。
-1. 模型代码并作为通用LLM（支持VLM）项目开放在[https://github.com/qibin0506/llm-model](https://github.com/qibin0506/llm-model)
-2. 训练代码支持Pretrain、SFT、GRPO、GSPO、DPO等训练方式，代码完成度较高，上手简单，项目开放在[https://github.com/qibin0506/llm_trainer](https://github.com/qibin0506/llm_trainer)
+1. 模型代码并作为通用LLM（支持VLM）项目开放在 <a href="https://github.com/qibin0506/llm-model" target="_blank">https://github.com/qibin0506/llm-model</a>
+2. 训练代码支持Pretrain、SFT、GRPO、GSPO、DPO等训练方式，代码完成度较高，上手简单，项目开放在<a href="https://github.com/qibin0506/llm_trainer" target="_blank">https://github.com/qibin0506/llm_trainer</a>
 
 #### 训练细节
 Cortex 2.5采用多阶段预训练和多阶段后训练的方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py --include localhost:1,2,4`。训练文件名称可以参考下面详细介绍。
@@ -91,7 +91,7 @@ mv pytorch_model.bin last_checkpoint.bin
 
 ### 继续训练
 本项目提供各个阶段训练完成后的checkpoint, 可根据自己需求选择checkpoint继续训练。
-checkpoint下载：[https://www.modelscope.cn/models/qibin0506/Cortex-2.5.1](https://www.modelscope.cn/models/qibin0506/Cortex-2.5.1)
+checkpoint下载：<a href="https://www.modelscope.cn/models/qibin0506/Cortex-2.5.1" target="_blank">https://www.modelscope.cn/models/qibin0506/Cortex-2.5.1</a>
 训练方式：
 1. 确定继续训练的阶段，修改`file_dataset.py`中对应阶段的FileDataset中的文件，然后使用`smart_train`进行训练，例如重新进行dpo，则执行`smart_train train_dpo.py`
 2. 本项目全部在4x4090进行训练，同时`utils.py`中的配置数据也是按照对应硬件配置确定，如有不同的训练设备可自行修改`utils.py`进行适配。
