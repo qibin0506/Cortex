@@ -36,7 +36,6 @@ def get_bochaai_search_api():
     }
 
     def search(q: str):
-        q = q.replace('/think', '').replace('/no think', '')
         payload = json.dumps({
             "query": f"{q}",
             "summary": True,
@@ -52,7 +51,13 @@ def get_bochaai_search_api():
         if json_['code'] != 200:
             return None
 
-        summary = json_['data']['webPages']['value'][0]['summary']
-        return f'{summary}\n'
+        search_result = []
+        for idx, web_page in enumerate(json_['data']['webPages']['value']):
+            search_result.append(f'{idx + 1}. {web_page['summary'].replace("\n", ' ')}\n')
+
+        return ''.join(search_result)
 
     return search
+
+def get_search_api():
+    return get_bochaai_search_api()
