@@ -31,9 +31,9 @@
 
 
 ## 效果预览
-| 思考模式 | 非思考模式 | 思考预算 |
-|----------|----------|----------|
-| <img src="./images/screenshot_1.png"> | <img src="./images/screenshot_2.png"> | <img src="./images/screenshot_3.png"> |
+| 思考模式 | 非思考模式 | 思考预算 | 深度搜索 |
+|----------|----------|----------|----------|
+| <img src="./images/screenshot_1.png"> | <img src="./images/screenshot_2.png"> | <img src="./images/screenshot_3.png"> | <img src="./images/screenshot_4.png"> |
 
 
 ## 快速开始
