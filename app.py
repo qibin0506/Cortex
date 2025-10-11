@@ -169,19 +169,26 @@ def sse_chat():
             device=device
         )
 
-        type = 'thinking_chunk' if thinking else 'answer_chunk'
+        msg_type = None
+        is_start = False
         for chunk in generator:
+            if chunk == '\n' and is_start: continue
+            is_start = False
+
             if chunk == '</s>': break
             if chunk == '<assistant>' or chunk == '</assistant>': continue
             if chunk == '</think>' or chunk == '</answer>': continue
             if chunk == '<think>':
-                type = 'thinking_chunk'
+                msg_type = 'thinking_chunk'
+                is_start = True
                 continue
             elif chunk == '<answer>':
-                type = 'answer_chunk'
+                msg_type = 'answer_chunk'
+                is_start = True
                 continue
 
-            yield fmt_msg(type, chunk)
+            if msg_type:
+                yield fmt_msg(msg_type, chunk)
     except Exception as e:
         traceback.print_exc()
         print(f"Error during model generation: {e}")
