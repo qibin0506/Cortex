@@ -22,7 +22,7 @@ def get_brave_search_api():
 
         search_result = []
         for idx, web_result in enumerate(web_results):
-            search_result.append(f'{idx + 1}. {web_result['description']}\n')
+            search_result.append("{}. {}\n".format(idx + 1, web_result['description']))
 
         return ''.join(search_result)
 
@@ -53,7 +53,7 @@ def get_bochaai_search_api():
 
         search_result = []
         for idx, web_page in enumerate(json_['data']['webPages']['value']):
-            search_result.append(f'{idx + 1}. {web_page['summary'].replace("\n", ' ')}\n')
+            search_result.append("{}. {}\n".format(idx + 1, web_page['summary'].replace('\n', ' ')))
 
         return ''.join(search_result)
 
