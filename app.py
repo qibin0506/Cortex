@@ -9,7 +9,7 @@ from utils import init_env, get_model_config, get_small_model_config
 from llm_model import LlmModel
 from llm_trainer import TrainerTools, streaming_generate
 import traceback
-from search import get_bochaai_search_api
+from search import get_search_api
 
 init_env()
 device = "cpu"
@@ -94,7 +94,7 @@ def sse_chat():
         if deep_search:
             thinking = False
             think_budget_enable = False
-            search_api = get_bochaai_search_api()
+            search_api = get_search_api()
             chat_history = chat_history[-1:]
         else:
             search_api = None
@@ -109,14 +109,19 @@ def sse_chat():
         return
 
     try:
-        chat_history = [{'role': 'system', 'content': ' '}, *chat_history]
+        if search_api:
+            chat_history = [{'role': 'system', 'content': '我需要根据用户的问题和搜索到的结果给出用户答案，回答的方式要简明扼要'}, *chat_history]
+        else:
+            chat_history = [{'role': 'system', 'content': ' '}, *chat_history]
+
         chat_template = TrainerTools().tokenizer.apply_chat_template(chat_history, tokenizer=False)
         chat_template = f'{chat_template}<assistant>'
 
         if search_api:
-            search_result = search_api(chat_history[-1]['content'])
+            user_prompt = chat_history[-1]['content'].replace('/think', '').replace('/no think', '')
+            search_result = search_api(user_prompt)
             if search_result:
-                search_msg = f'根据用户的问题，我搜索到了如下内容：\n{search_result}。下面我需要根据搜索到的内容给到用户答案。'
+                search_msg = f'根据用户的问题，我搜索到了如下内容：\n{search_result}'
                 yield fmt_msg('thinking_chunk', search_msg)
                 chat_template = f'{chat_template}<think>{search_msg}</think>'
 
