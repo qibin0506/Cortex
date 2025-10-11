@@ -18,6 +18,9 @@
 2. 本项目训练过程包括：预训练、SFT、GSPO和DPO。
 3. 模型支持思考控制和思考预算能力，可通过添加/think和/no think控制是否启用思考模式。
 
+## 在线体验
+本项目已在huggingface spaces部署，可以通过访问[https://huggingface.co/spaces/qibin0506/Cortex](https://huggingface.co/spaces/qibin0506/Cortex)进行体验。
+
 ## 更新日志
 2025.10.10，Cortex 2.5支持**深度搜索**！
 1. 可以在网页中选中【深度搜索】体验。该功能需要注册并申请[bochaai API KEY](https://open.bochaai.com/)，申请完成后修改`search.py`文件，将`<YOUR BOCHAAI API KEY>`修改为你申请的API KEY。
@@ -37,10 +40,6 @@
 
 
 ## 快速开始
-### 在线体验
-本项目已在huggingface spaces部署，可以通过访问[https://huggingface.co/spaces/qibin0506/Cortex](https://huggingface.co/spaces/qibin0506/Cortex)进行体验。
-
-### 本地部署
 1. 确保本机已安装python3
 2. clone或下载本项目
 3. 安装依赖 `pip3 install -r requirements.txt`
