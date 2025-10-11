@@ -37,6 +37,10 @@
 
 
 ## 快速开始
+### 在线体验
+本项目已在huggingface spaces部署，可以通过访问[https://huggingface.co/spaces/qibin0506/Cortex](https://huggingface.co/spaces/qibin0506/Cortex)进行体验。
+
+### 本地部署
 1. 确保本机已安装python3
 2. clone或下载本项目
 3. 安装依赖 `pip3 install -r requirements.txt`
