@@ -77,7 +77,7 @@ mv pytorch_model.bin last_checkpoint.bin
 | 阶段 | stage0 | stage1 |
 |----------|----------|----------|
 | 训练脚本 | train_pretrain_stage0.py | train_pretrain_stage1.py |
-| 训练说明 | 上下文长度为512，在较短训练文本上进行训练 | 采用YaRN技术将上下文扩展至2048，并在长文本序列上继续训练 |
+| 训练说明 | 上下文长度为512，在较短训练文本上进行训练 | 采用YaRN将上下文扩展至2048，并在长文本序列上继续训练 |
 | loss | <img src="./images/loss_pretrain_stage0.png"> | <img src="./images/loss_pretrain_stage1.png">  |
 
 
@@ -86,7 +86,7 @@ mv pytorch_model.bin last_checkpoint.bin
 | 阶段 | COT SFT | GSPO | MIX SFT | DPO |
 |----------|----------|----------|----------|----------|
 | 训练脚本 | train_cot.py | train_grpo.py | train_mix.py | train_dpo.py |
-| 训练说明 | 在纯COT数据集上进行SFT，让模型原生支持思考模式 | 采用GSPO技术，提升模式的逻辑思考能力 | 使用COT和非COT混合数据集上进行SFT，让模式支持思考控制和思考预算能力 | 使用DPO进行对齐训练 |
+| 训练说明 | 在纯COT数据集上进行SFT，让模型原生支持思考模式 | 采用GSPO，提升模式的逻辑思考能力 | 使用COT和非COT混合数据集上进行SFT，让模式支持思考控制和思考预算能力 | 使用DPO进行对齐训练 |
 | loss | <img src="./images/loss_cot.png"> | <img src="./images/loss_gspo.png"> | <img src="./images/loss_mix.png"> | <img src="./images/loss_dpo.png"> |
 
 ### 继续训练
