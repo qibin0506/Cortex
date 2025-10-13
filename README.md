@@ -40,10 +40,10 @@
 
 
 ## 快速开始
-1. 确保本机已安装python3
-2. clone或下载本项目
+1. 本机已安装python3
+2. clone或下载本项目，并切换到项目目录
 3. 安装依赖 `pip3 install -r requirements.txt`
-4. 执行 `python3 app.py`运行项目，首次访问会下载模型文件，等待服务准备完成后，访问链接 <a href="http://0.0.0.0:8080/)" target="_blank">http://0.0.0.0:8080/</a> 即可体验
+4. 执行 `python3 app.py`运行项目，首次允许会下载模型文件，等待服务准备完成后，访问链接 <a href="http://0.0.0.0:8080/)" target="_blank">http://0.0.0.0:8080/</a> 即可体验
 
 
 ## 技术细节
