@@ -99,12 +99,6 @@ checkpoint下载：<a href="https://www.modelscope.cn/models/qibin0506/Cortex-2.
 2. 本项目全部在4x4090进行训练，同时`utils.py`中的配置数据也是按照对应硬件配置确定，如有不同的训练设备可自行修改`utils.py`进行适配。
 3. `file_dataset.py`文件用来管理数据集文件，可按需修改，数据集文件会自动下载，使用完成后会自动删除，无需人工管理。
 
-## 共创
-帮助我探索更大模型的训练，或者联系我[qibin0506@gmail.com](mailto:qibin0506@gmail.com)
-
-<img alt="" src="./images/wechat.jpg" style="width: 20%"> <br/> <img alt="" src="./images/alipay.jpg" style="width: 20%">
-
-
 ## star-history
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date&theme=dark"/>
