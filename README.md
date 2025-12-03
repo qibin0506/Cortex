@@ -19,7 +19,7 @@
 3. 模型支持思考控制和思考预算能力，可通过添加/think和/no think控制是否启用思考模式。
 
 ## 更新日志
-🔥2025.12.03，添加更小的<a href="https://github.com/qibin0506/Cortex/ppo" target="_blank">flash模型</a>
+🔥2025.12.03，添加更小的<a href="https://github.com/qibin0506/Cortex/tree/master/ppo" target="_blank">flash模型</a>
 1. 添加一个0.1B的dense模型
 2. 使用PPO对flash模型进行对齐
 3. 升级llm_trainer和llm_model到最新版本
