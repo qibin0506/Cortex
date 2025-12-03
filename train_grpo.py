@@ -236,7 +236,7 @@ def get_reward_v3(completion_text: str, correct_answer_str: str) -> float:
 
     return float(final_reward)
 
-def reward_func(prompt_ids: torch.Tensor, completion_ids: torch.Tensor, answers: torch.Tensor) -> List[float]:
+def reward_func(prompt_ids: List[torch.Tensor], completion_ids: torch.Tensor, answers: List[Optional[torch.Tensor]]) -> List[float]:
     # 1. 如果回答包含思考部分，则奖励1.25分
     # 2. 如果正确答案相同，则奖励1分
     # 3. 如果正确答案在回答中，则奖励0.5分

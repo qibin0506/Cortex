@@ -19,11 +19,19 @@
 3. 模型支持思考控制和思考预算能力，可通过添加/think和/no think控制是否启用思考模式。
 
 ## 更新日志
+🔥2025.12.03，添加更小的<a href="https://github.com/qibin0506/Cortex/ppo" target="_blank">flash模型</a>
+1. 添加一个0.1B的dense模型
+2. 使用PPO对flash模型进行对齐
+3. 升级llm_trainer和llm_model到最新版本
+4. 添加更多指标数据和可视化（例如PPO和GRPO的rewards指标等）
+5. flash使用自训练的、字典大小为6414的tiny_tokenizer
+
+
 2025.10.10，Cortex 2.5支持**深度搜索**！
 1. 可以在网页中选中【深度搜索】体验。该功能需要注册并申请 <a href="https://open.bochaai.com/" target="_blank">bochaai API KEY</a>，申请完成后修改`search.py`文件，将`<YOUR BOCHAAI API KEY>`修改为你申请的API KEY。
 
 
-🔥2025.9.23，Cortex 2.5发布，完全从头重新训练，主要更新内容如下：
+2025.9.23，Cortex 2.5发布，完全从头重新训练，主要更新内容如下：
 1. 升级MoE模块。
 2. 替换预训练数据集: 采用匠数SFT数据集组装成预训练使用，同时加入部分代码数据集。
 3. 调整MoE的aux_loss比重。

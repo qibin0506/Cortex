@@ -13,12 +13,9 @@ def init_env():
     #  See documentation for Memory Management
     #  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
     os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
-
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-    os.environ['TOKENIZERS_TYPE'] = 'zh_llama'  # or qwen
     os.environ['TOKEN_DIR'] = './tokens/'
-
     os.environ['LOG_DIR'] = './log/'
 
     os.environ['DIST_CHECKPOINT_DIR'] = 'ckpt_dir'
@@ -137,6 +134,7 @@ def _get_train_config(
     )
 
     dpo_config = train_configs.DPOConfig(
+        ref_model_checkpoint=init_state_dict,
         loss_beta=0.1,
         loss_label_smoothing=0.0,
         nll_loss_coef=0.2
@@ -268,6 +266,7 @@ def _get_train_config(
         batch_size=real_batch_size,
         model_config=model_config,
         file_dataset=file_dataset,
+        max_seq_len=model_config.max_position_embeddings,
         gradient_accumulation_steps=gradient_accumulation_steps,
         eval_batch_interval=eval_batch_interval,
         loss_config=train_configs.LossConfig(),
@@ -278,7 +277,7 @@ def _get_train_config(
         data_loader_config=data_loader_config,
         kd_config=kd_config,
         init_state_dict=init_state_dict,
-        eval_config=train_configs.EvalConfig()
+        eval_config=train_configs.EvalConfig(max_new_tokens=model_config.max_position_embeddings),
     )
 
     return train_config

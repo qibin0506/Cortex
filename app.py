@@ -137,7 +137,6 @@ def sse_chat():
             generator = streaming_generate(
                 model=model,
                 prompt=prompt_token,
-                max_position_embeddings=2048,
                 max_new_tokens=output_token_count,
                 temperature=temperature,
                 k=None,
@@ -161,7 +160,6 @@ def sse_chat():
         generator = streaming_generate(
             model=model,
             prompt=prompt_token,
-            max_position_embeddings=2048,
             max_new_tokens=output_token_count,
             temperature=temperature,
             k=None,
