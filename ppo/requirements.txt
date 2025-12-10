@@ -1,0 +1,16 @@
+# Base ----------------------------------------
+torch
+transformers
+deepspeed
+sentencepiece
+protobuf
+modelscope
+pyarrow
+nvitop
+pandas
+scikit-learn
+project_llm_model
+project_llm_trainer
+bottle
+paste
+# waitress
