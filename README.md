@@ -19,6 +19,8 @@
 3. 模型支持思考控制和思考预算能力，可通过添加/think和/no think控制是否启用思考模式。
 
 ## 更新日志
+2025.12.10，添加modelscope部署，可在线体验[modelscope](https://www.modelscope.cn/studios/qibin0506/Cortex)。
+
 🔥2025.12.03，添加更小的<a href="https://github.com/qibin0506/Cortex/tree/master/ppo" target="_blank">flash模型</a>
 1. 添加一个0.1B的dense模型
 2. 使用PPO对flash模型进行对齐
@@ -53,7 +55,7 @@
 4. 执行 `python3 app.py`运行项目，首次允许会下载模型文件，等待服务准备完成后，访问链接 <a href="http://0.0.0.0:8080/)" target="_blank">http://0.0.0.0:8080/</a> 即可体验
 
 ### 在线体验
-本项目已部署在[huggingface spaces](https://huggingface.co/spaces/qibin0506/Cortex)。
+本项目已部署在[huggingface spaces](https://huggingface.co/spaces/qibin0506/Cortex)和[modelscope](https://www.modelscope.cn/studios/qibin0506/Cortex)。
 
 
 ## 技术细节
