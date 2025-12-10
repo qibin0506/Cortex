@@ -41,6 +41,7 @@ def get_model_config():
         num_key_value_heads=2,
         max_position_embeddings=512,
         attention_implementation='auto',
+        tie_word_embeddings=True,
         rope_config=RoPEConfig(
             rope_type='default',
             rope_theta=1e6
