@@ -132,7 +132,7 @@ def _get_train_config(
     )
 
     ppo_config = train_configs.PPOConfig(
-        ppo_epochs=1,
+        ppo_epochs=2,
         ppo_batch_size=8,
         vf_coef=0.5,
         kl_beta=0.02,
