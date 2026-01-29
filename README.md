@@ -38,7 +38,7 @@
 本项目已部署在[modelscope](https://www.modelscope.cn/studios/qibin0506/Cortex)
 
 
-## 技术细节
+## ⚙️ 技术细节
 
 ### 数据处理
 Cortex 3.0采用[minimind_dataset](https://www.modelscope.cn/datasets/gongjy/minimind_dataset/files)数据集进行训练，拆分sft数据集，一部分作为预训练数据集，少量作为sft数据集，具体数据处理逻辑可参考[process_data.py](https://github.com/qibin0506/Cortex/blob/master/process_data.py)。
@@ -108,7 +108,7 @@ sft avg score = -0.73046875
 ppo avg score = 0.8203125
 ```
 
-## star-history
+## 📊 star-history
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date&theme=dark"/>
   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date"/>
