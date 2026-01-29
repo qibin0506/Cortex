@@ -1,15 +1,13 @@
 import json
 import os
-import uuid
 
 from bottle import Bottle, request, response, run
 
 import torch
-from utils import init_env, get_model_config, get_small_model_config
+from utils import init_env, get_model_config
 from llm_model import LlmModel
 from llm_trainer import TrainerTools, streaming_generate
 import traceback
-from search import get_search_api
 
 init_env()
 device = "cpu"
@@ -18,19 +16,24 @@ if torch.cuda.is_available():
 elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
     device = "mps"
 
-model_name = 'dpo.bin'
+os.makedirs('./bin/', exist_ok=True)
+model_name = 'ppo_policy.bin'
 
-if not os.path.exists(f'./{model_name}'):
+if not os.path.exists(f'./bin/{model_name}'):
     from modelscope import snapshot_download
     snapshot_download(
-        f'qibin0506/Cortex-2.5.1',
+        'qibin0506/Cortex-3.0',
         allow_file_pattern=[model_name],
-        local_dir='./'
+        local_dir='./bin/'
     )
 
 model = LlmModel(get_model_config(long_context=True)).to(device=device)
-model.load_state_dict(torch.load(f'./{model_name}', weights_only=True))
+model.load_state_dict(torch.load(f'./bin/{model_name}', weights_only=True))
 model.eval()
+
+system_tokens = TrainerTools().tokenizer.encode('<system> </s>')
+max_new_tokens = 512
+max_user_tokens = 2048 - max_new_tokens
 
 app = Bottle()
 
@@ -43,15 +46,23 @@ def fmt_msg(event, data):
     return f"{json.dumps({'event': event, 'data':data})}\n\n"
 
 
-def generate_user_uuid() -> str:
-    unique_id = uuid.uuid4()
-    return unique_id.hex
-
-
 @app.get('/')
 def index():
-    new_uuid = generate_user_uuid()
-    return html.replace('{{__USER_UUID_PLACEHOLDER__}}', new_uuid)
+    visitor_count = 0
+    generate_count = 0
+
+    if os.path.exists('./visitor.txt'):
+        with open('./visitor.txt', 'r') as f:
+            visitor_count = int(f.readline())
+
+    if os.path.exists('./generator.txt'):
+        with open('./generator.txt', 'r') as f:
+            generate_count = int(f.readline())
+
+    with open('./visitor.txt', 'w') as f:
+        f.write(f'{visitor_count + 1}')
+
+    return html.replace('{{__VISITOR_COUNT__}}', f"{visitor_count}").replace('{{__GENERATE_COUNT__}}', f"{generate_count}")
 
 
 @app.hook('after_request')
@@ -78,28 +89,18 @@ def sse_chat():
     response.set_header('Connection', 'keep-alive')
 
     try:
+        generate_count = 0
+        if os.path.exists('./generator.txt'):
+            with open('./generator.txt', 'r') as f:
+                generate_count = int(f.readline())
+
+        with open('./generator.txt', 'w') as f:
+            f.write(f'{generate_count + 1}')
+
         payload = request.json
-        chat_history = payload.get('history')
-        thinking = payload.get('thinking')
-        user_uuid = payload.get('uuid')
+        chat_history: list = payload.get('history')
         temperature = payload.get('temperature')
         top_p = payload.get('top_p')
-        think_budget_enable = thinking and payload.get('think_budget_enable')
-        think_budget = payload.get('think_budget')
-        deep_search = payload.get('deep_search')
-
-        if not think_budget:
-            think_budget_enable = False
-
-        if deep_search:
-            thinking = False
-            think_budget_enable = False
-            search_api = get_search_api()
-            chat_history = chat_history[-1:]
-        else:
-            search_api = None
-            # 仅保留两轮对话
-            chat_history = chat_history[-3:]
 
         if not chat_history:
             yield fmt_msg('error', 'Chat history cannot be empty')
@@ -109,84 +110,40 @@ def sse_chat():
         return
 
     try:
-        if search_api:
-            chat_history = [{'role': 'system', 'content': '我需要根据用户的问题和搜索到的结果给出用户答案，回答的方式要简明扼要'}, *chat_history]
-        else:
-            chat_history = [{'role': 'system', 'content': ' '}, *chat_history]
+        chat_history.reverse()
+        chat_tokens = []
 
-        chat_template = TrainerTools().tokenizer.apply_chat_template(chat_history, tokenizer=False)
-        chat_template = f'{chat_template}<assistant>'
+        for chat in chat_history:
+            role = '<user>' if chat['role'] == 'user' else '<assistant>'
+            chat_item_tokens = TrainerTools().tokenizer.encode(f"{role}{chat['content']}</s>")
+            if len(system_tokens) + len(chat_tokens) + len(chat_item_tokens) >= max_user_tokens:
+                break
+            chat_tokens.append(chat_item_tokens)
 
-        if search_api:
-            user_prompt = chat_history[-1]['content'].replace('/think', '').replace('/no think', '')
-            search_result = search_api(user_prompt)
-            if search_result:
-                search_msg = f'根据用户的问题，我搜索到了如下内容：\n{search_result}'
-                yield fmt_msg('thinking_chunk', search_msg)
-                chat_template = f'{chat_template}<think>{search_msg}</think>'
+        chat_tokens.reverse()
+        chat_tokens = [item for sublist in chat_tokens for item in sublist]
+        chat_tokens.append(TrainerTools().tokenizer.assistant)
+        chat_tokens = system_tokens + chat_tokens
 
-        prompt_token = TrainerTools().tokenizer.encode(chat_template, unsqueeze=True)
-        output_token_count = max(2048 - prompt_token.shape[-1], 0)
-
-        if think_budget_enable:
-            think_budget_content = '。考虑到用户的时间限制，我现在必须根据思考直接给出解决方案\n'
-            think_budget_encoded = TrainerTools().tokenizer.encode(f'{think_budget_content}</think>')
-            think_budget = think_budget - len(think_budget_encoded)
-            output_token_count = min(think_budget, output_token_count)
-
-            generator = streaming_generate(
-                model=model,
-                prompt=prompt_token,
-                max_new_tokens=output_token_count,
-                temperature=temperature,
-                k=None,
-                p=top_p,
-                device=device
-            )
-
-            think_content = ''
-            for chunk in generator:
-                think_content += chunk
-                if chunk == '</think>': break
-                yield fmt_msg('thinking_chunk', chunk)
-
-            if '</think>' not in think_content:
-                think_content += f'{think_budget_content}</think>'
-                yield fmt_msg('thinking_chunk', think_budget_content)
-
-            prompt_token = torch.concat([prompt_token, TrainerTools().tokenizer.encode(think_content, unsqueeze=True)], dim=-1)
-            output_token_count = max(2048 - prompt_token.shape[-1], 0)
+        print(TrainerTools().tokenizer.decode(chat_tokens))
 
         generator = streaming_generate(
             model=model,
-            prompt=prompt_token,
-            max_new_tokens=output_token_count,
+            prompt=torch.tensor(chat_tokens),
+            max_new_tokens=max_new_tokens,
             temperature=temperature,
             k=None,
             p=top_p,
-            device=device
+            device=device,
+            return_token=True
         )
 
-        msg_type = None
-        is_start = False
+        all_response_tokens = []
         for chunk in generator:
-            if chunk == '\n' and is_start: continue
-            is_start = False
+            if chunk == TrainerTools().tokenizer.end: break
+            all_response_tokens.append(chunk)
+            yield fmt_msg('answer_chunk', TrainerTools().tokenizer.decode(torch.tensor(all_response_tokens)))
 
-            if chunk == '</s>': break
-            if chunk == '<assistant>' or chunk == '</assistant>': continue
-            if chunk == '</think>' or chunk == '</answer>': continue
-            if chunk == '<think>':
-                msg_type = 'thinking_chunk'
-                is_start = True
-                continue
-            elif chunk == '<answer>':
-                msg_type = 'answer_chunk'
-                is_start = True
-                continue
-
-            if msg_type:
-                yield fmt_msg(msg_type, chunk)
     except Exception as e:
         traceback.print_exc()
         print(f"Error during model generation: {e}")

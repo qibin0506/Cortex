@@ -20,7 +20,7 @@ class FileDatasetBase(FileDataset):
         if not os.path.exists(file_path):
             if TrainerTools().parallel.is_main_process:
                 dataset_snapshot_download(
-                    'qibin0506/Cortex-2.5-train-data',
+                    'qibin0506/Cortex-3.0-data',
                     allow_file_pattern=[self.file_names[idx]],
                     local_dir=data_root_dir()
                 )
@@ -35,7 +35,7 @@ class FileDatasetBase(FileDataset):
                 threading.Thread(
                     target=dataset_snapshot_download,
                     kwargs={
-                        'dataset_id': 'qibin0506/Cortex-2.5-train-data',
+                        'dataset_id': 'qibin0506/Cortex-3.0-data',
                         'allow_file_pattern': [next_file],
                         'local_dir': data_root_dir()
                     }
@@ -50,51 +50,28 @@ class FileDatasetBase(FileDataset):
         return file_path
 
 
-class PretrainStage0FileDataset(FileDatasetBase):
+class PretrainFileDataset(FileDatasetBase):
     def __init__(self):
         super().__init__([
-            'pretrain_short_0.pkl',
-            'pretrain_short_1.pkl',
-            'pretrain_short_2.pkl',
-            'pretrain_short_3.pkl',
-            'pretrain_short_4.pkl',
-            'pretrain_short_5.pkl',
-            'pretrain_short_6.pkl',
-            'pretrain_short_7.pkl',
+            'pretrain_data_0.npy',
+            'pretrain_data_1.npy',
         ])
 
 
-class PretrainStage1FileDataset(FileDatasetBase):
+class MidtrainFileDataset(FileDatasetBase):
     def __init__(self):
         super().__init__([
-            'pretrain_long_0.pkl',
-            'pretrain_long_1.pkl'
+            'midtrain_data_0.npy',
         ])
 
 
-class COTFileDataset(FileDatasetBase):
-    def __init__(self):
-        super().__init__(['cot_sft.pkl'])
-
-
-class GRPOFileDataset(FileDatasetBase):
-    def __init__(self):
-        super().__init__(['grpo.pkl'])
-
-
-class MixFileDataset(FileDatasetBase):
-    def __init__(self):
-        super().__init__(['mix_sft.pkl'])
-
-
-class DPOFileDataset(FileDatasetBase):
-    def __init__(self):
-        super().__init__(['dpo.pkl'])
-
-
-class DistillDataset(FileDatasetBase):
+class SFTFileDataset(FileDatasetBase):
     def __init__(self):
         super().__init__([
-            'cot_sft.pkl',
-            'mix_sft.pkl'
+            'sft_data.npy',
         ])
+
+
+class PPODataset(FileDatasetBase):
+    def __init__(self):
+        super().__init__(['ppo_data.npy'])

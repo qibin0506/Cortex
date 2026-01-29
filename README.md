@@ -2,7 +2,7 @@
     <img alt="created by gemini" src="./images/logo.png" style="width: 30%">
 </div>
 
-<div align="center"><b>个人构建MoE大模型：从预训练到DPO的完整实践</b></div> <br />
+<div align="center"><b>个人构建MoE大模型：从预训练到RLHF的完整实践</b></div> <br />
 
 <div align="center">
 
@@ -13,40 +13,20 @@
 [![GitHub pull request](https://img.shields.io/badge/PRs-welcome-blue)](https://github.com/qibin0506/Cortex/pulls)
 </div>
 
-## 模型简介
-1. Cortex是一个个人可承担训练成本(千元内)、从头进行训练的**0.6B**的MoE LLM，推理时激活参数仅为**0.2B**。
-2. 本项目训练过程包括：预训练、SFT、GSPO和DPO。
-3. 模型支持思考控制和思考预算能力，可通过添加/think和/no think控制是否启用思考模式。
+## ✨ 模型简介
+1. Cortex是一个个人可承担训练成本、从头进行训练的的LLM，训练过程包括Pretrain、Midtrain、SFT和RLHF。
+2. 完全解耦模型、训练代码，模型代码：[llm_model](https://github.com/qibin0506/llm_model)，训练代码：[llm_trainer](https://github.com/qibin0506/llm_trainer)
+3. 在线体验：[modelscope](https://www.modelscope.cn/studios/qibin0506/Cortex)
 
-## 更新日志
-2025.12.10，添加modelscope部署，可在线体验[modelscope](https://www.modelscope.cn/studios/qibin0506/Cortex)。
+## 🔥 更新日志
+2026.1.29 Cortex 3.0发布。Cortex 2.5请访问：[cortex_2.5](https://github.com/qibin0506/Cortex/tree/cortex_2.5)
+1. 模型：使用自训练的8192大小的tokenizer，模型类型为80M参数的dense模型。
+2. 升级llm_model和llm_trainer，训练速度全面提升，完整训练流程耗时约3小时(硬件规则为4*4090)。
+3. 不在支持思考模式、思考控制和深度搜索，如需训练思考模式请参考[cortex_2.5](https://github.com/qibin0506/Cortex/tree/cortex_2.5)。
+4. 简化训练流程，训练过程包括Pretrain、Midtrain、SFT和PPO。
+5. 优化断点续训，可快速恢复训练。
 
-🔥2025.12.03，添加更小的<a href="https://github.com/qibin0506/Cortex/tree/master/ppo" target="_blank">flash模型</a>
-1. 添加一个0.1B的dense模型
-2. 使用PPO对flash模型进行对齐
-3. 升级llm_trainer和llm_model到最新版本
-4. 添加更多指标数据和可视化（例如PPO和GRPO的rewards指标等）
-5. flash使用自训练的、字典大小为6414的tiny_tokenizer
-
-
-2025.10.10，Cortex 2.5支持**深度搜索**！
-1. 可以在网页中选中【深度搜索】体验。该功能需要注册并申请 <a href="https://open.bochaai.com/" target="_blank">bochaai API KEY</a>，申请完成后修改`search.py`文件，将`<YOUR BOCHAAI API KEY>`修改为你申请的API KEY。
-
-
-2025.9.23，Cortex 2.5发布，完全从头重新训练，主要更新内容如下：
-1. 升级MoE模块。
-2. 替换预训练数据集: 采用匠数SFT数据集组装成预训练使用，同时加入部分代码数据集。
-3. 调整MoE的aux_loss比重。
-4. 训练时将系统提示词设置为空，推理时可根据不同任务设置不同的系统提示词或者轮空，通过测试结果看最终模型可以响应不同系统提示词，例如设置系统提示词为【帮我把以下内容扩展成一篇文章】，模型的输出类似【好，我需要帮用户把关于生命意义扩展成一篇文章...】。
-
-
-## 效果预览
-| 思考模式 | 非思考模式 | 思考预算 | 深度搜索 |
-|----------|----------|----------|----------|
-| <img src="./images/screenshot_1.png"> | <img src="./images/screenshot_2.png"> | <img src="./images/screenshot_3.png"> | <img src="./images/screenshot_4.png"> |
-
-
-## 快速开始
+## 🚀 快速开始
 
 ### 本地安装
 1. 本机已安装python>=3.10
@@ -55,59 +35,78 @@
 4. 执行 `python3 app.py`运行项目，首次允许会下载模型文件，等待服务准备完成后，访问链接 <a href="http://0.0.0.0:8080/)" target="_blank">http://0.0.0.0:8080/</a> 即可体验
 
 ### 在线体验
-本项目已部署在[huggingface spaces](https://huggingface.co/spaces/qibin0506/Cortex)和[modelscope](https://www.modelscope.cn/studios/qibin0506/Cortex)。
+本项目已部署在[modelscope](https://www.modelscope.cn/studios/qibin0506/Cortex)
 
 
 ## 技术细节
-### 模型和训练代码
-本项目模型和训练代码完全开源并解耦。
-1. 模型代码并作为通用LLM（支持VLM）项目开放在 <a href="https://github.com/qibin0506/llm-model" target="_blank">https://github.com/qibin0506/llm-model</a>
-2. 训练代码支持Pretrain、SFT、GRPO、GSPO、DPO等训练方式，代码完成度较高，上手简单，项目开放在<a href="https://github.com/qibin0506/llm_trainer" target="_blank">https://github.com/qibin0506/llm_trainer</a>
 
-#### 训练细节
-Cortex 2.5采用多阶段预训练和多阶段后训练的方式进行训练，开启训练使用`smart_train xxx.py`，如果需要在指定GPU上进行训练，可以使用`smart_train xxx.py --include localhost:1,2,4`。训练文件名称可以参考下面详细介绍。
+### 数据处理
+Cortex 3.0采用[minimind_dataset](https://www.modelscope.cn/datasets/gongjy/minimind_dataset/files)数据集进行训练，拆分sft数据集，一部分作为预训练数据集，少量作为sft数据集，具体数据处理逻辑可参考[process_data.py](https://github.com/qibin0506/Cortex/blob/master/process_data.py)。
 
-***注意：每个阶段训练完成后需要处理一下保存的checkpoint，手动保存一下`log`目录下的内容，然后删除`log`目录。例如，使用deepspeed训练时需要将`ckpt_dir`里的checkpoint转换为bin文件保存下来，然后删除`log`和`ckpt_dir`目录。***
-``` shell
-# 如果需要，复制一份log日志存档
-cp -r ./log ./log_pretrain0/
-# 删除log
-rm -fr ./log
-# 开始处理checkpoint
+
+### 训练流程
+
+#### Pretrain
+Pretrain主要用于基础知识学习，max_position_embeddings设置为512。
+使用`smart_train train_pretrain.py`开启训练，训练日志在log目录下，可通过`vis_log ./log/log.txt`查看训练指标，`vis_lr ./log/lr.txt`查看lr。
+训练完成后，需要将zero checkpoint转化为`last_checkpoint.bin`保存到训练根目录继续下一个阶段的训练。然后删除`ckpt_dir`和`log`目录。
+```bash
 cd ./ckpt_dir
-# 转换checkpoint
 python3 zero_to_fp32.py ./ ../
 cd ..
-# ckpt_dir没用了，可以直接删除
-rm-fr ./ckpt_dir
-# 下次训练，会自动加载last_checkpoint.bin里的权重，参考utils.py文件里的init_state_dict设置
 mv pytorch_model.bin last_checkpoint.bin
 ```
+Pretrain指标：
+ <img src="./images/metrics_pretrain.png">
 
-#### 预训练
-预训练过程采用两阶段训练模式
-| 阶段 | stage0 | stage1 |
-|----------|----------|----------|
-| 训练脚本 | train_pretrain_stage0.py | train_pretrain_stage1.py |
-| 训练说明 | 上下文长度为512，在较短训练文本上进行训练 | 采用YaRN将上下文扩展至2048，并在长文本序列上继续训练 |
-| loss | <img src="./images/loss_pretrain_stage0.png"> | <img src="./images/loss_pretrain_stage1.png">  |
+#### Midtrain
+Midtrain采用YARN将max_position_embeddings扩展到2048，以支持长上下文。
+使用`smart_train train_midtrain.py`开启训练，训练日志在log目录下，可通过`vis_log ./log/log.txt`查看训练指标，`vis_lr ./log/lr.txt`查看lr。
+训练完成后，需要将zero checkpoint转化为`last_checkpoint.bin`保存到训练根目录继续下一个阶段的训练。然后删除`ckpt_dir`和`log`目录。
+```bash
+cd ./ckpt_dir
+python3 zero_to_fp32.py ./ ../
+cd ..
+mv pytorch_model.bin last_checkpoint.bin
+```
+Midtrain指标：
+ <img src="./images/metrics_midtrain.png">
+
+#### SFT
+SFT主要是让模型学会对话，学习固定的对话格式和根据用户prompt进行回答。
+使用`smart_train train_sft.py`开启训练，训练日志在log目录下，可通过`vis_log ./log/log.txt`查看训练指标，`vis_lr ./log/lr.txt`查看lr。
+训练完成后，需要将zero checkpoint转化为`last_checkpoint.bin`和`sft.bin`保存到训练根目录继续下一个阶段的训练。然后删除`ckpt_dir`和`log`目录。
+```bash
+cd ./ckpt_dir
+python3 zero_to_fp32.py ./ ../
+cd ..
+mv pytorch_model.bin last_checkpoint.bin
+cp last_checkpoint.bin sft.bin
+```
+SFT指标：
+ <img src="./images/metrics_sft.png">
+
+#### PPO
+使用`smart_train train_ppo.py`开启训练，训练日志在log目录下，可通过`vis_log ./log/log.txt`查看训练指标。
+预训练完成后，需要将zero checkpoint转化为`ppo.bin`。需要注意的是：`ppo.bin`中包含了policy模型和value模型，需要通过运行`extract_ppo_result.py`将policy模型从`ppo.bin`中提取出来使用，提取结果`ppo_policy.bin`可作为最终训练结果使用。
+```bash
+cd ./ckpt_dir
+python3 zero_to_fp32.py ./ ../
+cd ..
+mv pytorch_model.bin ppo.bin
+# 从ppo.bin提取ppo_policy.bin
+python3 extract_ppo_result.py
+```
+PPO指标：
+ <img src="./images/metrics_ppo.png">
 
 
-#### 后训练
-后训练过程采用四阶段训练模式
-| 阶段 | COT SFT | GSPO | MIX SFT | DPO |
-|----------|----------|----------|----------|----------|
-| 训练脚本 | train_cot.py | train_grpo.py | train_mix.py | train_dpo.py |
-| 训练说明 | 在纯COT数据集上进行SFT，让模型原生支持思考模式 | 采用GSPO，提升模式的逻辑思考能力 | 使用COT和非COT混合数据集上进行SFT，让模式支持思考控制和思考预算能力 | 使用DPO进行对齐训练 |
-| loss | <img src="./images/loss_cot.png"> | <img src="./images/loss_gspo.png"> | <img src="./images/loss_mix.png"> | <img src="./images/loss_dpo.png"> |
-
-### 继续训练
-本项目提供各个阶段训练完成后的checkpoint, 可根据自己需求选择checkpoint继续训练。
-checkpoint下载：<a href="https://www.modelscope.cn/models/qibin0506/Cortex-2.5.1" target="_blank">https://www.modelscope.cn/models/qibin0506/Cortex-2.5.1</a>
-训练方式：
-1. 确定继续训练的阶段，修改`file_dataset.py`中对应阶段的FileDataset中的文件，然后使用`smart_train`进行训练，例如重新进行dpo，则执行`smart_train train_dpo.py`
-2. 本项目全部在4x4090进行训练，同时`utils.py`中的配置数据也是按照对应硬件配置确定，如有不同的训练设备可自行修改`utils.py`进行适配。
-3. `file_dataset.py`文件用来管理数据集文件，可按需修改，数据集文件会自动下载，使用完成后会自动删除，无需人工管理。
+##### PPO和SFT对比
+sft后模型已经可以正常对话了，在经过PPO后回答的内容会跟符合人类的口味，该功能通过reward model打分训练实现。为了证明PPO的效果，可以通过运行`python3 compare_ppo_sft.py`对比结果。以下是对比结果：
+```
+sft avg score = -0.73046875
+ppo avg score = 0.8203125
+```
 
 ## star-history
 <picture>

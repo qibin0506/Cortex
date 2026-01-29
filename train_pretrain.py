@@ -1,5 +1,5 @@
 from llm_trainer import Trainer
-from utils import init_env, get_pretrain_stage0_config
+from utils import init_env, get_pretrain_config
 
 if __name__ == '__main__':
     init_env()
@@ -11,7 +11,7 @@ if __name__ == '__main__':
     ]
 
     trainer = Trainer(
-        train_config=get_pretrain_stage0_config(),
+        train_config=get_pretrain_config(),
         eval_prompts=eval_prompts
     )
 
