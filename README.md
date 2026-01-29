@@ -21,7 +21,7 @@
 ## 🔥 更新日志
 2026.1.29 Cortex 3.0发布。Cortex 2.5请访问：[cortex_2.5](https://github.com/qibin0506/Cortex/tree/cortex_2.5)
 1. 模型：使用自训练的8192大小的tokenizer，模型类型为80M参数的dense模型。
-2. 升级llm_model和llm_trainer，训练速度全面提升，完整训练流程耗时约3小时(硬件规则为4*4090)。
+2. 升级llm_model和llm_trainer，训练速度全面提升，完整训练流程耗时约7小时(硬件规则为4*4090)。
 3. 不在支持思考模式、思考控制和深度搜索，如需训练思考模式请参考[cortex_2.5](https://github.com/qibin0506/Cortex/tree/cortex_2.5)。
 4. 简化训练流程，训练过程包括Pretrain、Midtrain、SFT和PPO。
 5. 优化断点续训，可快速恢复训练。
