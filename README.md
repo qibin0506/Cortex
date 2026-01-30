@@ -2,7 +2,7 @@
     <img alt="created by gemini" src="./images/logo.png" style="width: 30%">
 </div>
 
-<div align="center"><b>个人构建MoE大模型：从预训练到RLHF的完整实践</b></div> <br />
+<div align="center"><b>从零构建大模型：从预训练到RLHF的完整实践</b></div> <br />
 
 <div align="center">
 
