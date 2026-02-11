@@ -10,7 +10,7 @@ nvitop
 pandas
 scikit-learn
 project_llm_model==0.7.8
-project_llm_trainer==0.13.10
+project_llm_trainer==0.13.11
 bottle
 paste
 # waitress
