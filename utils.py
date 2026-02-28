@@ -183,10 +183,9 @@ def _get_train_config(
     )
 
     data_loader_config = train_configs.DataLoaderConfig(
-        data_loader_pin_memory=True,
-        data_loader_num_workers=0,
-        data_loader_shuffle=False,
-        data_loader_drop_last=True
+        pin_memory=True,
+        num_workers=0,
+        shuffle=False
     )
 
     train_config = train_configs.TrainConfig(
