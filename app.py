@@ -1,7 +1,7 @@
 import json
 import os
 
-from bottle import Bottle, request, response, run
+from bottle import Bottle, request, response, run, static_file
 
 import torch
 from utils import init_env, get_model_config
@@ -45,6 +45,9 @@ def fmt_msg(event, data):
     data = data.replace('\n', '<br />')
     return f"{json.dumps({'event': event, 'data':data})}\n\n"
 
+@app.get('/static/<filename>')
+def server_static(filename):
+    return static_file(filename, root='./static')
 
 @app.get('/')
 def index():
