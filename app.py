@@ -17,7 +17,7 @@ elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
     device = "mps"
 
 os.makedirs('./bin/', exist_ok=True)
-model_name = 'ppo_policy.bin'
+model_name = 'ppo_policy2.bin'
 
 if not os.path.exists(f'./bin/{model_name}'):
     from modelscope import snapshot_download
