@@ -72,6 +72,6 @@ class SFTFileDataset(FileDatasetBase):
         ])
 
 
-class PPODataset(FileDatasetBase):
+class PPOFileDataset(FileDatasetBase):
     def __init__(self):
         super().__init__(['ppo_data.npy'])
