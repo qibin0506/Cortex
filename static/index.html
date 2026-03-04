@@ -5,28 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cortex - AI 聊天</title>
 
-    <!-- DNS 预解析，加速 CDN 域名连接 -->
-    <link rel="dns-prefetch" href="https://cdn.bootcdn.net">
-    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <script src="/static/tailwind.js"></script>
 
-    <!-- Tailwind CSS (仅限开发测试使用，生产环境强烈建议预编译) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.css">
-    <script defer src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-    <script defer src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://lib.baomitu.com/KaTeX/0.16.9/katex.min.css">
+    <script defer src="https://lib.baomitu.com/KaTeX/0.16.9/katex.min.js"></script>
+    <script defer src="https://lib.baomitu.com/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 
     <!-- Marked.js -->
-    <script defer src="https://cdn.bootcdn.net/ajax/libs/marked/12.0.1/marked.min.js"></script>
+    <script defer src="https://lib.baomitu.com/marked/12.0.1/marked.min.js"></script>
 
     <!-- highlight.js -->
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script defer src="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://lib.baomitu.com/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script defer src="https://lib.baomitu.com/highlight.js/11.9.0/highlight.min.js"></script>
 
     <style>
-        /* --- 字体和排版优化 --- */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
             line-height: 1.6;
         }
         .prose {
