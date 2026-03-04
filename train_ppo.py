@@ -22,7 +22,7 @@ model_dir = snapshot_download(
 
 rm = AutoModel.from_pretrained(
     model_dir,
-    torch_dtype=torch.float16,
+    torch_dtype=torch.bfloat16,
     device_map='cpu',
     trust_remote_code=True
 ).eval()
@@ -55,8 +55,8 @@ def reward_func(
     log_details = {}
 
     # 参数设置
-    SCORE_EOS_PENALTY = -5.0  # 没有结束符的惩罚
-    RM_WEIGHT = 0.5  # RM 分数权重
+    SCORE_EOS_PENALTY = -1.0  # 没有结束符的惩罚
+    RM_WEIGHT = 1.0  # RM 分数权重
 
     debug_scores = {
         "eos_score": 0.0,
@@ -108,7 +108,7 @@ def reward_func(
                 return_tensors="pt",
                 padding=True,
                 truncation=True,
-                max_length=2048
+                max_length=4096
             ).to(rm_device)
 
             with torch.no_grad():
