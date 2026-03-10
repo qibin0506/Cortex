@@ -9,8 +9,5 @@ tokens_per_image = 196
 
 def data_root_dir():
     dir_name = './data/'
-    if not os.path.exists(dir_name):
-        os.makedirs(dir_name)
-
+    os.makedirs(dir_name, exist_ok=True)
     return dir_name
-
