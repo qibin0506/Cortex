@@ -6,7 +6,7 @@ from llm_trainer.utils import set_seed
 from modelscope import snapshot_download
 from transformers import AutoModel, AutoTokenizer
 
-set_seed()
+set_seed(42)
 
 device = "cpu"
 if torch.cuda.is_available():

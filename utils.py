@@ -1,9 +1,12 @@
 import torch
 import math
 from llm_trainer import train_configs
-from llm_model import ModelConfig, RoPEConfig
+from llm_model import ModelConfig, RoPEConfig, AttnResConfig
 from file_dataset import *
 import os
+
+ENABLE_ATTENTION_RESIDUALS = False
+ENABLE_GRADIENT_CHECKPOINTING = False
 
 
 def init_env():
@@ -53,7 +56,8 @@ def get_model_config(long_context=False):
         rope_config=RoPEConfig(
             rope_type=rope_type,
             rope_theta=10000.0,
-        )
+        ),
+        attn_res_config=AttnResConfig(num_blocks=4) if ENABLE_ATTENTION_RESIDUALS else None
     )
 
 
@@ -220,7 +224,10 @@ def _get_train_config(
         )
 
     ds_config = train_configs.DsConfig(
-        zero_config=train_configs.DsZero1Config()
+        zero_config=train_configs.DsZero1Config(),
+        activation_checkpointing=train_configs.DsActivationCheckpointingConfig(
+            cpu_checkpointing=True
+        ) if ENABLE_GRADIENT_CHECKPOINTING else None
     )
 
     pretrain_config = train_configs.PretrainConfig(
