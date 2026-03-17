@@ -31,11 +31,23 @@
 > *   **Cortex 3.0 (当前)**：追求极致速度与标准流程，80M Dense 模型，支持 PPO。
 > *   **[Cortex 2.5](https://github.com/qibin0506/Cortex/tree/cortex_2.5)**：支持 **MoE 架构**、**思考模式 (Thinking Mode)** 及深度搜索功能。如需研究类 o1 的思考能力，请切换至 2.5 分支。
 
-## 📰 更新日志 (2026.1.29)
+## 📰 更新日志
+<details open> 
+<summary> <b>2026.3.17</b> </summary>
+    
+*   添加[Attention Residuals](https://github.com/MoonshotAI/Attention-Residuals)支持。
+*   升级llm_model到0.9.0。
+*   升级llm_trainer到0.14.4。
 
+</details>
+<details close> 
+<summary> <b>2026.1.29</b> </summary>
+    
 *   🚀 **架构变更**：切换为 80M Dense 模型，使用自训练的 8192 词表 Tokenizer。
 *   ⚡ **速度飞跃**：训练框架全面升级，断点续训优化，4x4090 仅需 7 小时跑通全流程。
 *   📉 **流程精简**：移除思考模式，专注于标准 RLHF 流程（Pretrain -> Midtrain -> SFT -> PPO）。
+ 
+</details>
 
 ## 🚀 快速开始
 
