@@ -212,12 +212,14 @@ python3 extract_ppo_result.py
 
 ---
 
+<!--
 ## 📊 star-history
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date&theme=dark"/>
   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date"/>
   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=qibin0506/Cortex&type=Date"/>
 </picture>
+-->
 
 ## 🤝 Contributions
 ![Alt](https://repobeats.axiom.co/api/embed/92085da81aa351b1fe3af41e9edad308411a2eb5.svg "Repobeats analytics image")
